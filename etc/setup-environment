@@ -1,36 +1,47 @@
 # BOF
 
 DBASE="/opt/development"
+MANPATH="/usr/share/man"
 
-for X in								\
-		"${DBASE}/bin"						\
-		"/opt/llvm/active/bin"					\
-		"/opt/cmake/active/bin"					\
-		"/opt/erlang/otp/active/bin"				\
-		"/opt/blender/bin"					\
-		"/opt/ruby/active/bin"					\
-		"/opt/rubymine/active/bin"				\
-		"-/opt/java/jdk/1.6.x/bin"				\
-		"/opt/java/jdk/1.7.x/bin"				\
-		"/opt/java/apache/ant/active/bin"			\
-		"/opt/java/apache/maven/active/bin"			\
-		"-/opt/java/jython/active/bin"				\
-		"-/opt/java/jruby/active/bin"				\
-		"/opt/android/sdk/tools"				\
-		"/opt/android/sdk/platform-tools"			\
-		"/opt/android/ndk"					\
-		"/opt/eclipse"						\
-		"/opt/gambc/current/bin"				\
+for X in							\
+		"${DBASE}"					\
+		"/opt/llvm/active"				\
+		"/opt/cmake/active"				\
+		"/opt/erlang/otp/active"			\
+		"/opt/blender"					\
+		"/opt/ruby/active"				\
+		"/opt/rubymine/active"				\
+		"-/opt/java/jdk/1.6.x"				\
+		"/opt/java/jdk/1.7.x"				\
+		"/opt/java/apache/ant/active"			\
+		"/opt/java/apache/maven/active"			\
+		"-/opt/java/jython/active"			\
+		"-/opt/java/jruby/active"			\
+		"/opt/android/sdk/tools"			\
+		"/opt/android/sdk/platform-tools"		\
+		"/opt/android/ndk"				\
+		"/opt/eclipse"					\
+		"/opt/gambc/current"				\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
 		if [ ! -d "$X" ] ; then continue ; fi
 		R=$(echo "$PATH" | grep "$X")
 		if [ -n "$R" ] ; then continue ; fi
-		PATH="$X:$PATH"
+		for P in "$X/bin" "$X"
+		do
+			if [ ! -d "$P" ] ; then continue ; fi
+			PATH="$P:$PATH"
+			break
+		done
+		for M in "$X/man" "$X/share/man"
+		do
+			if [ ! -d "$M" ] ; then continue ; fi
+			MANPATH="$M:$MANPATH"
+		done
 	done
 
-export PATH
+export PATH MANPATH
 
 hash -r
 
