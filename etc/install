@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ "$1" = "--force" ]
+then
+	BASHALIAS="$HOME/.bash_aliases"
+	if [ -f "${BASHALIAS}" ] ; then
+		rm -f "${BASHALIAS}"
+	fi
+	ln -sf "/opt/development/etc/dot_bash_aliases" "${BASHALIAS}"
+else
+	echo "Nothing was changed!"
+fi
+
+exit 0
+
+#
+# End Of File
+#

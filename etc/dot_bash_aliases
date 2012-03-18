@@ -1,0 +1,12 @@
+#
+# $HOME/.bash_aliases
+#
+
+alias development-environment='. /opt/development/etc/setup-environment'
+
+alias emacs-cleanup-files='find . -name '"'"'*~'"'"' -execdir rm -v '"'"'{}'"'"' \;'
+alias emacs-edit-clj='emacs `find . -type f -name '"'"'*.clj'"'"'`'
+
+#
+# End Of File
+#

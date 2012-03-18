@@ -1,0 +1,121 @@
+#!/bin/bash
+
+BASE_DIR="/opt/development"
+REPO_DIR="${HOME}/source/repos"
+CONFIG_FILE="${BASE_DIR}/etc/repository-processor-data"
+
+TS_SESSION=$(date -u '+%Y%m%d-%H%M%S')
+
+action_usage() {
+	cat <<EOF
+usage: $0 [find|edit|update|help]
+EOF
+}
+
+msg_warning() {
+	echo "Warning: $1!"
+}
+
+msg_error() {
+	local ERRCODE="$1"
+	echo "Error: $2!"
+	exit ${ERRCODE}
+}
+
+action_update_command() {
+	local TYP="$1"
+	local PRT="$2"
+	local CMD="$3"
+	local ARG="$4"
+	local PTH="$5"
+	local TS_B=$(date -u '+%Y%m%d-%H%M%S')
+	echo "[${TS_B}] Beginning update of \"${PRT}\":"
+	cd "${PTH}"
+	"${CMD}" ${ARG}
+	RES=$?
+	local TS_E=$(date -u '+%Y%m%d-%H%M%S')
+	echo -n "[${TS_E}] Finished update of \"${PRT}\": "
+	if [ "${RES}" = "0" ]
+	then
+		echo "success."
+	else
+		echo "failure!"
+	fi
+}
+
+action_update() {
+	while read RTYPE RPART
+	do
+		if [ -z "${RTYPE}" ] ; then continue ; fi
+		local C1=$(echo ${RTYPE} | grep '^;')
+		local C2=$(echo ${RTYPE} | grep '^#')
+		if [ -n "$C1" -o -n "$C2" ] ; then msg_warning "Skipping: \"${RPART}\"" ; continue ; fi
+		if [ -z "${RPART}" ] ; then continue ; fi
+		local RPATH="${REPO_DIR}/${RPART}"
+		if [ ! -d "${RPATH}" ] ; then continue ; fi
+		case ${RTYPE} in
+			'git')
+				action_update_command "${RTYPE}" "${RPART}" "git" "pull" "${RPATH}"
+				;;
+			'hg')
+				action_update_command "${RTYPE}" "${RPART}" "hg" "pull" "${RPATH}"
+				;;
+			'svn')
+				action_update_command "${RTYPE}" "${RPART}" "svn" "update" "${RPATH}"
+				;;
+			'*')
+				msg_warning "unknown repository type (\"${RTYPE}\") for \"${RPART}\""
+				;;
+		esac
+	done < "${CONFIG_FILE}"
+}
+
+action_find() {
+	for TYP in "git" "svn" "hg"
+	do
+		for PRT in `cd ${REPO_DIR} && find . -maxdepth 3 -type d -name ".${TYP}" | sed "s/\.\///g" | sed "s/\/\.${TYP}//g"`
+		do
+			echo -e -n "${TYP}:\t${PRT} => "
+			RES=$(grep "${PRT}" "${CONFIG_FILE}")
+			if [ -z "${RES}" ]
+			then
+				cat >>"${CONFIG_FILE}" <<CATEOF
+;${TYP}	${PRT}
+CATEOF
+				echo "added."
+			else
+				echo "skipping."
+			fi
+		done
+
+	done
+}
+
+action_edit_data() {
+	editor "${CONFIG_FILE}"
+}
+
+case $1 in
+	u|update)
+		action_update
+		;;
+	e|edit)
+		action_edit_data
+		;;
+	f|find)
+		action_find
+		;;
+	h|help)
+		action_usage
+		;;
+	*)
+		action_usage
+		msg_error 1 "unknown command"
+		;;
+esac
+
+exit 0
+
+#
+# End Of File
+#

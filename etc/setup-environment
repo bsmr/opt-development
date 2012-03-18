@@ -1,0 +1,37 @@
+# BOF
+
+DBASE="/opt/development"
+
+for X in								\
+		"${DBASE}/bin"						\
+		"/opt/llvm/active/bin"					\
+		"/opt/cmake/active/bin"					\
+		"/opt/erlang/otp/active/bin"				\
+		"/opt/blender/bin"					\
+		"/opt/ruby/active/bin"					\
+		"/opt/rubymine/active/bin"				\
+		"-/opt/java/jdk/1.6.x/bin"				\
+		"/opt/java/jdk/1.7.x/bin"				\
+		"/opt/java/apache/ant/active/bin"			\
+		"/opt/java/apache/maven/active/bin"			\
+		"-/opt/java/jython/active/bin"				\
+		"-/opt/java/jruby/active/bin"				\
+		"/opt/android/sdk/tools"				\
+		"/opt/android/sdk/platform-tools"			\
+		"/opt/android/ndk"					\
+		"/opt/eclipse"						\
+		"/opt/gambc/current/bin"				\
+		""
+	do
+		if [ -z "$X" ] ; then continue ; fi
+		if [ ! -d "$X" ] ; then continue ; fi
+		R=$(echo "$PATH" | grep "$X")
+		if [ -n "$R" ] ; then continue ; fi
+		PATH="$X:$PATH"
+	done
+
+export PATH
+
+hash -r
+
+# EOF

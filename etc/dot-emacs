@@ -1,0 +1,46 @@
+;;;
+;;; .emacs
+;;;
+
+;;;; for user e-mail address
+(setq user-mail-address "boris.muehmer@googlemail.com")
+
+; add emacs setting
+(custom-set-variables
+    ;; custom-set-variables was added by Custom.
+    ;; If you edit it by hand, you could mess it up, so be careful.
+    ;; Your init file should contain only one such instance.
+    ;; If there is more than one, they won't work right.
+    '(cua-mode t nil (cua-base))
+    '(inhibit-startup-screen t)
+    '(scroll-bar-mode (quote right)))
+    (custom-set-faces
+    ;; custom-set-faces was added by Custom.
+    ;; If you edit it by hand, you could mess it up, so be careful.
+    ;; Your init file should contain only one such instance.
+    ;; If there is more than one, they won't work right.
+    )
+
+;;;; add erlang stuff
+;(setq erlang-root-base "/opt/erlang/otp/active/lib/erlang")
+;(setq erlang-tools-version "2.6.6.6")
+;;; no more changes
+;;;(setq erlang-root-dir (concat erlang-root-base "/lib/erlang"))
+;(add-to-list 'load-path (concat erlang-root-base "/lib/tools-" erlang-tools-version "/emacs"))
+;(add-to-list 'exec-path (concat erlang-root-base "/bin"))
+;(require 'erlang-start)
+;(require 'erlang-flymake)
+
+;;;; add package
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
+;;;; add some clojure specific stuff
+(setq slime-net-coding-system 'utf-8-unix)
+
+;;;
+;;; End Of File
+;;;

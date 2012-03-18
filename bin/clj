@@ -1,0 +1,15 @@
+#!/bin/sh
+
+CBASE="/opt/java/clojure/1.3.x"
+RWRAP="/usr/bin/rlwrap"
+CP="${CBASE}/clojure.jar"
+
+if [ -x "${RWRAP}" ]
+then
+	exec "${RWRAP}" java -cp "${CP}" clojure.main $*
+else
+	#echo "Warning: no rlwrap found..."
+	exec java -cp "${CP}" clojure.main $*
+fi
+
+# EOF
