@@ -11,10 +11,10 @@ for X in							\
 		"/opt/blender"					\
 		"/opt/ruby/active"				\
 		"-/opt/rubymine/active"				\
-		"-/opt/java/jdk/1.6.x"				\
-		"/opt/java/jdk/1.7.x"				\
+		"/opt/java/jdk/active"				\
 		"/opt/java/apache/ant/active"			\
 		"/opt/java/apache/maven/active"			\
+		"-/opt/java/clojure"				\
 		"-/opt/java/jython/active"			\
 		"-/opt/java/jruby/active"			\
 		"/opt/android/sdk/tools"			\
