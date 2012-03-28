@@ -8,6 +8,8 @@ for X in							\
 		"/opt/llvm/active"				\
 		"/opt/cmake/active"				\
 		"/opt/erlang/otp/active"			\
+		"/opt/haskell/ghc/active"			\
+		"/opt/haskell/platform/active"			\
 		"/opt/blender"					\
 		"/opt/ruby/active"				\
 		"-/opt/rubymine/active"				\
