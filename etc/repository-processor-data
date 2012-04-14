@@ -66,5 +66,7 @@ hg	sourceforge.net/clisp
 git	kenai.com/jogl
 git	kenai.com/gluegen
 git	kenai.com/jogl-demos
+git	github.com/coffee-script
+git	sourceforge.net/sbcl
 svn	rubyforge.org/ruby-opengl
 svn	blender.org/blender

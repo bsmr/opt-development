@@ -14,7 +14,8 @@ action_setup() {
 	export ERLSBAS="${HOME}/source/system/erlang/otp"
 	#export ERLSVER="R14B04"
 	#export ERLSVER="R15B"
-	export ERLSVER="git"
+	export ERLSVER="R15B01"
+	#export ERLSVER="git"
 	#http://www.erlang.org/download/otp_src_R15B.tar.gz
 	#export ERLURLD="http://www.erlang.org/download/otp_src_${ERLSVER}.tar.gz"
 	export ERLSNAM="otp_src_${ERLSVER}"
@@ -24,13 +25,13 @@ action_setup() {
 	#export ERLLINK="/opt/erlang-otp"
 
 	# Setup the source environment
-	#test ! -d "${ERLSBAS}" && mkdir -p "${ERLSBAS}"
-	#cd "${ERLSBAS}"
-	#tar xvf "${ERLARCS}/${ERLSTAR}"
-	#cd "${ERLSNAM}"
+	test ! -d "${ERLSBAS}" && mkdir -p "${ERLSBAS}"
+	cd "${ERLSBAS}"
+	tar xvf "${ERLARCS}/${ERLSTAR}"
+	cd "${ERLSNAM}"
 
 	# change to source
-	cd "/home/family/bsmr/source/repos/github.com/otp"
+	#cd "/home/family/bsmr/source/repos/github.com/otp"
 
 	# Some needed enviroment settings
 	export ERL_TOP="`pwd`"
@@ -38,17 +39,15 @@ action_setup() {
 	export LANG="C"
 
 	# special git actions
-	./otp_build autoconf
+	#./otp_build autoconf
 
 	# Configure
 	/usr/bin/time ./configure --prefix="${PREFIX}" --with-gmp 2>&1 | tee "log-1-configure.txt"
 
 	# Compile and install
 	/usr/bin/time make all		2>&1 | tee "log-2-build_system.txt"
-	#/usr/bin/time make -j 8 all	2>&1 | tee "log-2-build_system.txt"
 	/usr/bin/time make install	2>&1 | tee "log-3-install_system.txt"
 	/usr/bin/time make docs		2>&1 | tee "log-4-build_docs.txt"
-	#/usr/bin/time make -j 8 docs	2>&1 | tee "log-4-build_docs.txt"
 	/usr/bin/time make install-docs	2>&1 | tee "log-5-install_docs.txt"
 
 	# Create a directory with shortcuts to all PDFs

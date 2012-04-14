@@ -8,23 +8,27 @@ for X in							\
 		"/opt/llvm/active"				\
 		"/opt/cmake/active"				\
 		"/opt/erlang/otp/active"			\
-		"/opt/haskell/ghc/active"			\
-		"/opt/haskell/platform/active"			\
+		"-/opt/haskell/ghc/active"			\
+		"-/opt/haskell/platform/active"			\
+		"-/opt/ocaml/active"				\
 		"/opt/blender"					\
 		"/opt/ruby/active"				\
 		"-/opt/rubymine/active"				\
 		"/opt/java/jdk/active"				\
 		"/opt/java/apache/ant/active"			\
 		"/opt/java/apache/maven/active"			\
-		"-/opt/java/clojure"				\
+		"/opt/java/clojure"				\
 		"-/opt/java/jython/active"			\
 		"-/opt/java/jruby/active"			\
 		"/opt/android/sdk/tools"			\
 		"/opt/android/sdk/platform-tools"		\
 		"/opt/android/ndk"				\
 		"/opt/eclipse"					\
-		"/opt/gambc/current"				\
-		"/opt/racket/active"				\
+		"/opt/node/active"				\
+		"-/opt/gambc/current"				\
+		"-/opt/racket/active"				\
+		"-/opt/lua/active"				\
+		"/opt/qt/active"				\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
