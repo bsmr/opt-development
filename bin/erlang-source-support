@@ -8,8 +8,8 @@ EOF
 
 action_setup() {
 	# Some personal environmen settings
-	export ERLARCS="${HOME}/Downloads/erlang.org"
-	#export ERLARCS="/public/Software/Downloads/erlang.org"
+	#export ERLARCS="${HOME}/Downloads/erlang.org"
+	export ERLARCS="/public/Software/Downloads/erlang.org"
 	#export ERLSBAS="${HOME}/devel/source/system/erlang/otp"
 	export ERLSBAS="${HOME}/source/system/erlang/otp"
 	#export ERLSVER="R14B04"

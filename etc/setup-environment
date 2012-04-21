@@ -11,12 +11,14 @@ for X in							\
 		"-/opt/haskell/ghc/active"			\
 		"-/opt/haskell/platform/active"			\
 		"-/opt/ocaml/active"				\
-		"/opt/blender"					\
+		"-/opt/blender"					\
+		"/opt/blender/active"				\
 		"/opt/ruby/active"				\
 		"-/opt/rubymine/active"				\
 		"/opt/java/jdk/active"				\
 		"/opt/java/apache/ant/active"			\
 		"/opt/java/apache/maven/active"			\
+		"-/opt/clojure"					\
 		"/opt/java/clojure"				\
 		"-/opt/java/jython/active"			\
 		"-/opt/java/jruby/active"			\

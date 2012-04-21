@@ -3,6 +3,7 @@ git	github.com/ruby
 git	github.com/hiphop-php
 git	github.com/leiningen
 git	github.com/cowboy
+git	github.com/cowboy_examples
 git	github.com/cloud9
 git	github.com/clooj
 git	github.com/proper
@@ -13,7 +14,6 @@ git	github.com/webgl-lessons
 git	github.com/quoted.erl
 git	github.com/clojure
 git	github.com/wings
-git	github.com/cowboy_examples
 git	github.com/jreversepro
 git	github.com/three.js
 git	github.com/cl
@@ -44,6 +44,7 @@ git	github.com/jenkins
 git	github.com/jogl-demos
 git	github.com/erjang
 git	github.com/immutant
+git	github.com/coffee-script
 svn	googlecode.com/bullet-read-only
 svn	googlecode.com/closure-compiler-read-only
 svn	googlecode.com/closure-library-read-only
@@ -66,7 +67,6 @@ hg	sourceforge.net/clisp
 git	kenai.com/jogl
 git	kenai.com/gluegen
 git	kenai.com/jogl-demos
-git	github.com/coffee-script
 git	sourceforge.net/sbcl
 svn	rubyforge.org/ruby-opengl
 svn	blender.org/blender
