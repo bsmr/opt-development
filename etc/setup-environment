@@ -25,7 +25,8 @@ for X in							\
 		"/opt/android/sdk/tools"			\
 		"/opt/android/sdk/platform-tools"		\
 		"/opt/android/ndk"				\
-		"/opt/eclipse"					\
+		"-/opt/eclipse"					\
+		"/opt/java/eclipse"				\
 		"/opt/node/active"				\
 		"-/opt/gambc/current"				\
 		"-/opt/racket/active"				\
