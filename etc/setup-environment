@@ -8,6 +8,7 @@ for X in							\
 		"/opt/llvm/active"				\
 		"/opt/cmake/active"				\
 		"/opt/erlang/otp/active"			\
+		"/opt/lisp/sbcl/active"				\
 		"-/opt/haskell/ghc/active"			\
 		"-/opt/haskell/platform/active"			\
 		"-/opt/ocaml/active"				\
@@ -32,6 +33,8 @@ for X in							\
 		"-/opt/racket/active"				\
 		"-/opt/lua/active"				\
 		"/opt/qt/active"				\
+		"/opt/prolog/swi/active"			\
+		"/opt/prolog/gnu/active"			\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi

@@ -47,6 +47,7 @@ git	github.com/immutant
 git	github.com/coffee-script
 git	github.com/yaws
 git	github.com/mochiweb
+git	github.com/DOOM-3
 svn	googlecode.com/bullet-read-only
 svn	googlecode.com/closure-compiler-read-only
 svn	googlecode.com/closure-library-read-only
