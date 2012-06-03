@@ -9,6 +9,7 @@ for X in							\
 		"/opt/cmake/active"				\
 		"/opt/erlang/otp/active"			\
 		"/opt/lisp/sbcl/active"				\
+		"/opt/lisp/clisp/active"			\
 		"-/opt/haskell/ghc/active"			\
 		"-/opt/haskell/platform/active"			\
 		"-/opt/ocaml/active"				\
@@ -33,6 +34,7 @@ for X in							\
 		"-/opt/racket/active"				\
 		"-/opt/lua/active"				\
 		"/opt/qt/active"				\
+		"/opt/scheme/gambit/active"			\
 		"/opt/prolog/swi/active"			\
 		"/opt/prolog/gnu/active"			\
 		""
