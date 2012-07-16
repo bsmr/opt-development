@@ -37,6 +37,7 @@ for X in							\
 		"/opt/scheme/gambit/active"			\
 		"/opt/prolog/swi/active"			\
 		"/opt/prolog/gnu/active"			\
+		"/opt/emacs/active"				\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
