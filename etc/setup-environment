@@ -35,8 +35,10 @@ for X in							\
 		"-/opt/lua/active"				\
 		"/opt/qt/active"				\
 		"/opt/scheme/gambit/active"			\
+		"/opt/scheme/mit/active"			\
 		"/opt/prolog/swi/active"			\
 		"/opt/prolog/gnu/active"			\
+		"/opt/emacs/active"				\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
