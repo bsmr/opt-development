@@ -46,15 +46,19 @@
     (add-to-list 'exec-path erlang-bin-dir))
 ;;; === add erlang stuff: end ==========================================
 
-;;;; add package
-(add-to-list 'load-path "~/.emacs.d/")
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-(package-initialize)
-
-;;;; add some clojure specific stuff
-;(setq slime-net-coding-system 'utf-8-unix)
+;;; === add lisp/slime stuff: start ====================================
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq slime-lisp-implementations
+        '((sbcl ("/opt/lisp/sbcl/active/bin/sbcl" "--core" "/opt/lisp/sbcl/slime/core-for-slime") :coding-system utf-8-unix)))
+(setq inferior-lisp-program "/opt/lisp/sbcl/active/bin/sbcl") ; your Lisp system
+(add-to-list 'load-path "/opt/lisp/slime/") ; your SLIME directory
+;(require 'slime)
+(require 'slime-autoloads)
+;(slime-setup)
+;(slime-setup '(slime-fancy))
+;(slime-setup '(slime-repl))
+(slime-setup '(slime-fancy slime-asdf slime-banner))
+;;; === add lisp/slime stuff: end ======================================
 
 ;;;
 ;;; End Of File
