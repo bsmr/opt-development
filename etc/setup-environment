@@ -10,6 +10,7 @@ for X in							\
 		"/opt/erlang/otp/active"			\
 		"/opt/lisp/sbcl/active"				\
 		"/opt/lisp/clisp/active"			\
+		"/opt/lisp/ecl/active"				\
 		"-/opt/haskell/ghc/active"			\
 		"-/opt/haskell/platform/active"			\
 		"-/opt/ocaml/active"				\
