@@ -37,6 +37,7 @@ for X in							\
 		"/opt/qt/active"				\
 		"/opt/scheme/gambit/active"			\
 		"/opt/scheme/mit/active"			\
+		"/opt/scheme/racket/active"			\
 		"/opt/prolog/swi/active"			\
 		"/opt/prolog/gnu/active"			\
 		"/opt/emacs/active"				\
