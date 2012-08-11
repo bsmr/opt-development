@@ -112,7 +112,47 @@ action_install_emacs() {
 	ln -sf "/opt/emacs/24.1" "/opt/emacs/active"
 }
 
+action_sbcl_src_install() {
+echo "Installing SBCL from source"
+OLD_LANG=$LANG
+export LANG="C"
+OLD_PATH=$PATH
+export PATH="/opt/lisp/sbcl/active/bin:$PATH"
+cd "/home/family/bsmr/source/install/lisp"
+tar xvf "/home/family/bsmr/Downloads/sbcl.org/sbcl-1.0.58-source.tar.bz2"
+cd sbcl-1.0.58
+sh make.sh --fancy --prefix="/opt/lisp/sbcl/1.0.58"
+(cd tests && sh run-tests.sh)
+(cd doc/manual && make)
+sh install.sh
+cd ..
+rm -rf "sbcl-1.0.58"
+PATH=$OLD_PATH
+LANG=$OLD_LANG
+export PATH
+export LANG
+}
 
+action_usage() {
+cat <<EOF
+usage: $0 [sbcl-src-install|help]
+EOF
+}
+
+case $1 in
+sbcl-src-install|ssi)
+	action_sbcl_src_install
+;;
+help)
+	action_usage
+;;
+*)
+	action_usage
+	exit 1
+;;
+esac
+
+exit 0
 
 #
 # End Of File

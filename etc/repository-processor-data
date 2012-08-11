@@ -15,7 +15,6 @@ git	github.com/quoted.erl
 git	github.com/clojure
 git	github.com/wings
 git	github.com/jreversepro
-git	github.com/three.js
 git	github.com/cl
 git	github.com/libgdx
 git	github.com/Erlang-and-OTP-in-Action-Source
@@ -49,6 +48,11 @@ git	github.com/yaws
 git	github.com/mochiweb
 git	github.com/DOOM-3
 git	github.com/TrinityCore
+git	github.com/jquery
+git	github.com/jquery-ui
+git	github.com/jquery-mobile
+git	github.com/three.js
+git	github.com/hunchentoot
 svn	googlecode.com/bullet-read-only
 svn	googlecode.com/closure-compiler-read-only
 svn	googlecode.com/closure-library-read-only
@@ -58,7 +62,6 @@ svn	googlecode.com/jwebsocket-read-only
 svn	googlecode.com/weberknecht-read-only
 svn	googlecode.com/jmonkeyengine-read-only
 svn	googlecode.com/wonderland
-;svn	javaforge.com/Open_ModelSphere
 hg	code.google.com/plovr
 svn	code.google.com/libgdx-read-only
 svn	code.google.com/opengles-book-samples-read-only
