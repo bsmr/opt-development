@@ -90,6 +90,45 @@ action_install_sbcl_from_source() {
 	# keep logs / cleanup
 }
 
+action_install_sbcl_from_git() {
+	TMPBASE=$(mktemp -d --suffix='-sbcl-install')
+	TS=$(date --utc '+%Y%m%d-%H%M%S')
+	OLD_PATH="$PATH"
+	export LANG="C"
+	SBD="/opt/lisp/sbcl"
+	SGA="${SBD}/active"
+	SGV="${SBD}/git/${TS}"
+	if [ ! -d "${SGV}" ] ; then mkdir -p "${SGV}" ; fi
+	cd "${TMPBASE}"
+	# pass 1
+	git clone https://github.com/sbcl/sbcl.git
+	cd "sbcl"
+	export SBCL_BASE="${SGA}"
+	export PATH="${SBCL_BASE}/bin:$OLD_PATH"
+	sh make.sh --fancy --prefix="${SGV}"	#2>&1 | tee "log-1-build.txt"
+	(cd tests && sh run-tests.sh)		#2>&1 | tee "log-2-tests.txt"
+	(cd doc/manual && make)			#2>&1 | tee "log-3-manuals.txt"
+	sh install.sh				#2>&1 | tee "log-4-install.txt"
+	cd ..
+	rm -rf "sbcl"
+	# pass 2
+	git clone https://github.com/sbcl/sbcl.git
+	cd "sbcl"
+	export SBCL_BASE="${SGV}"
+	export PATH="${SBCL_BASE}/bin:$OLD_PATH"
+	sh make.sh --fancy --prefix="${SGV}"	#2>&1 | tee "log-1-build.txt"
+	(cd tests && sh run-tests.sh)		#2>&1 | tee "log-2-tests.txt"
+	(cd doc/manual && make)			#2>&1 | tee "log-3-manuals.txt"
+	sh install.sh				#2>&1 | tee "log-4-install.txt"
+	cd ..
+	rm -rf "sbcl"
+	# cleanup
+	cd /tmp
+	rm -rf "${TMPBASE}"
+	PATH="$OLD_PATH"
+	export PATH
+}
+
 action_install_slime() {
 	cd "/opt/lisp"
 	cvs -d :pserver:anonymous:anonymous@common-lisp.net:/project/slime/cvsroot co slime
@@ -142,6 +181,9 @@ EOF
 case $1 in
 sbcl-src-install|ssi)
 	action_sbcl_src_install
+;;
+sbcl-git-install|sgi)
+	action_install_sbcl_from_git
 ;;
 help)
 	action_usage
