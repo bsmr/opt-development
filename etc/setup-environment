@@ -3,47 +3,48 @@
 DBASE="/opt/development"
 MANPATH="/usr/share/man"
 
-for X in							\
-		"${DBASE}"					\
-		"/opt/llvm/active"				\
-		"/opt/cmake/active"				\
-		"/opt/erlang/otp/active"			\
-		"/opt/lisp/sbcl/active"				\
-		"/opt/lisp/clisp/active"			\
-		"/opt/lisp/ecl/active"				\
-		"-/opt/haskell/ghc/active"			\
-		"-/opt/haskell/platform/active"			\
-		"-/opt/ocaml/active"				\
-		"-/opt/blender"					\
-		"/opt/blender/active"				\
-		"/opt/ruby/active"				\
-		"-/opt/rubymine/active"				\
-		"/opt/java/jdk/active"				\
-		"/opt/java/apache/ant/active"			\
-		"/opt/java/apache/maven/active"			\
-		"-/opt/clojure"					\
-		"/opt/java/clojure"				\
-		"-/opt/java/jython/active"			\
-		"-/opt/java/jruby/active"			\
-		"/opt/android/sdk/tools"			\
-		"/opt/android/sdk/platform-tools"		\
-		"/opt/android/ndk"				\
-		"-/opt/eclipse"					\
-		"/opt/java/eclipse"				\
-		"/opt/node/active"				\
-		"-/opt/gambc/current"				\
-		"-/opt/racket/active"				\
-		"-/opt/lua/active"				\
-		"/opt/qt/active"				\
-		"/opt/scheme/gambit/active"			\
-		"/opt/scheme/mit/active"			\
-		"/opt/scheme/racket/active"			\
-		"/opt/prolog/swi/active"			\
-		"/opt/prolog/gnu/active"			\
-		"/opt/emacs/active"				\
+for X in						\
+		"${DBASE}"				\
+		"/opt/ttf2pt1"				\
+		"/opt/llvm"				\
+		"/opt/cmake"				\
+		"/opt/erlang/otp"			\
+		"/opt/lisp/sbcl"			\
+		"/opt/lisp/clisp"			\
+		"/opt/lisp/ecl"				\
+		"-/opt/haskell/ghc"			\
+		"-/opt/haskell/platform"		\
+		"-/opt/ocaml"				\
+		"/opt/blender"				\
+		"/opt/ruby"				\
+		"-/opt/rubymine"			\
+		"/opt/java/jdk"				\
+		"/opt/java/apache/ant"			\
+		"/opt/java/apache/maven"		\
+		"-/opt/clojure"				\
+		"/opt/java/clojure"			\
+		"-/opt/java/jython"			\
+		"-/opt/java/jruby"			\
+		"/opt/android/sdk/tools"		\
+		"/opt/android/sdk/platform-tools"	\
+		"/opt/android/ndk"			\
+		"-/opt/eclipse"				\
+		"/opt/java/eclipse"			\
+		"/opt/node"				\
+		"-/opt/gambc/current"			\
+		"-/opt/racket"				\
+		"-/opt/lua"				\
+		"/opt/qt"				\
+		"/opt/scheme/gambit"			\
+		"/opt/scheme/mit"			\
+		"/opt/scheme/racket"			\
+		"/opt/prolog/swi"			\
+		"/opt/prolog/gnu"			\
+		"/opt/emacs"				\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
+		if [ -d "${X}/active" ] ; then X="${X}/active" ; fi
 		if [ ! -d "$X" ] ; then continue ; fi
 		R=$(echo "$PATH" | grep "$X")
 		if [ -n "$R" ] ; then continue ; fi

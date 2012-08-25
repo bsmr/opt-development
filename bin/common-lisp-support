@@ -67,12 +67,12 @@ action_install_sbcl_from_source() {
 	export SBCL_BASE="/opt/lisp/sbcl/active"
 	export SBCL_HOME="/opt/lisp/sbcl/active/lib/sbcl"
 	export PATH="${SBCL_BASE}/bin:$PATH"
-	sh make.sh --fancy --prefix="/opt/lisp/sbcl/1.0.57" 2>&1 | tee "log-1-build.txt"
-	(cd tests && sh run-tests.sh) 2>&1 | tee "log-2-tests.txt"
-	(cd doc/manual && make) 2>&1 | tee "log-3-manuals.txt"
+	sh make.sh --fancy --prefix="/opt/lisp/sbcl/1.0.57"	2>&1 | tee "log-1-build.txt"
+	(cd tests && sh run-tests.sh)				2>&1 | tee "log-2-tests.txt"
+	(cd doc/manual && make)					2>&1 | tee "log-3-manuals.txt"
 	unset INSTALL_ROOT
 	unset SBCL_HOME
-	sh install.sh 2>&1 | tee "log-4-install.txt"
+	sh install.sh						2>&1 | tee "log-4-install.txt"
 	#
 	# cleanup
 	cd ..
@@ -83,10 +83,10 @@ action_install_sbcl_from_source() {
 	export LANG="C"
 	export SBCL_BASE="/opt/lisp/sbcl/active"
 	export PATH="${SBCL_BASE}/bin:$PATH"
-	sh make.sh --fancy --prefix="/opt/lisp/sbcl/1.0.57" 2>&1 | tee "log-1-build.txt"
-	(cd tests && sh run-tests.sh) 2>&1 | tee "log-2-tests.txt"
-	(cd doc/manual && make) 2>&1 | tee "log-3-manuals.txt"
-	sh install.sh 2>&1 | tee "log-4-install.txt"
+	sh make.sh --fancy --prefix="/opt/lisp/sbcl/1.0.57"	2>&1 | tee "log-1-build.txt"
+	(cd tests && sh run-tests.sh)				2>&1 | tee "log-2-tests.txt"
+	(cd doc/manual && make)					2>&1 | tee "log-3-manuals.txt"
+	sh install.sh						2>&1 | tee "log-4-install.txt"
 	# keep logs / cleanup
 }
 
@@ -129,6 +129,14 @@ action_install_sbcl_from_git() {
 	export PATH
 }
 
+action_sbcl_generate_slime_core() {
+	SBD="/opt/lisp/sbcl"
+	OLD_PATH="$PATH"
+	PATH="${SBD}/active/bin:${PATH}"
+	cd "${SBD}/slime"
+	sbcl --no-sysinit --no-userinit --load /opt/development/etc/sbcl-swank-core.lisp
+}
+
 action_install_slime() {
 	cd "/opt/lisp"
 	cvs -d :pserver:anonymous:anonymous@common-lisp.net:/project/slime/cvsroot co slime
@@ -143,12 +151,12 @@ action_install_emacs() {
 	mkdir emacs-24.1-build
 	cd emacs-24.1-build
 	export LANG="C"
-	../emacs-24.1/configure --prefix=/opt/emacs/24.1 2>&1 | tee "log-1-configure.txt"
-	make all 2>&1 | tee "log-2-build.txt"
-	make install 2>&1 | tee "log-3-install.txt"
+	../emacs-24.1/configure --prefix=/opt/emacs/24.1	2>&1 | tee "log-1-configure.txt"
+	make all						2>&1 | tee "log-2-build.txt"
+	make install						2>&1 | tee "log-3-install.txt"
 	cd ..
 	rm -rf emacs-24.1*
-	ln -sf "/opt/emacs/24.1" "/opt/emacs/active"
+	echo '*** => ln -sf "/opt/emacs/24.1" "/opt/emacs/active"'
 }
 
 action_sbcl_src_install() {
@@ -174,7 +182,16 @@ export LANG
 
 action_usage() {
 cat <<EOF
-usage: $0 [sbcl-src-install|help]
+usage: `basename $0` [sbcl-src-install|sbcl-git-install|sbcl-slime-core|help]
+EOF
+}
+
+action_help() {
+	action_usage
+cat <<EOF
+	sbcl-src-install [ssi]: install sbcl from source
+	sbcl-git-install [sgi]: install sbcl from git repository
+	sbcl-slime-core  [ssc]: generate a core for fow sbcl-slime
 EOF
 }
 
@@ -185,8 +202,11 @@ sbcl-src-install|ssi)
 sbcl-git-install|sgi)
 	action_install_sbcl_from_git
 ;;
+sbcl-slime-core|ssc)
+	action_sbcl_generate_slime_core
+;;
 help)
-	action_usage
+	action_help
 ;;
 *)
 	action_usage
