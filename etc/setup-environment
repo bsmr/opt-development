@@ -44,6 +44,7 @@ for X in						\
 		"/opt/scheme/racket"			\
 		"/opt/prolog/swi"			\
 		"/opt/prolog/gnu"			\
+		"/opt/swig"				\
 		"/opt/emacs"				\
 		""
 	do
