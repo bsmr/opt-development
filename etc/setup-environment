@@ -1,7 +1,10 @@
 # BOF
 
 DBASE="/opt/development"
-MANPATH="/usr/share/man"
+if [ -z "${MANPATH}" ]
+then
+	MANPATH="/usr/share/man"
+fi
 
 for X in						\
 		"${DBASE}"				\
@@ -35,6 +38,7 @@ for X in						\
 		"-/opt/racket"				\
 		"-/opt/lua"				\
 		"/opt/qt"				\
+		"/opt/wx"				\
 		"/opt/scheme/gambit"			\
 		"/opt/scheme/mit"			\
 		"/opt/scheme/racket"			\
