@@ -21,6 +21,7 @@ for X in						\
 		"/opt/blender"				\
 		"/opt/ruby"				\
 		"-/opt/rubymine"			\
+		"/opt/python"				\
 		"/opt/java/jdk"				\
 		"/opt/java/apache/ant"			\
 		"/opt/java/apache/maven"		\
