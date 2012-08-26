@@ -15,6 +15,8 @@ action_update() {
 		cd "${BLENDER_SVN_SOURCE}"
 		svn update
 	fi
+	export LANG="C"
+	#export PATH="/opt/python/active/bin:$PATH"
 	if [ -d "${BLENDER_SVN_BUILD}" ] ; then
 		rm -rf "${BLENDER_SVN_BUILD}"
 	fi
@@ -23,9 +25,9 @@ action_update() {
 	cmake	"${BLENDER_SVN_SOURCE}"				\
 		-DCMAKE_INSTALL_PREFIX=/opt/blender/svn		\
 		-DWITH_CYCLES=OFF
-		-DWITH_INSTALL_PORTABLE=OFF			2>&1 | tee "log-1-ccmake.txt"
-	make -j8						2>&1 | tee "log-2-make.txt"
-	make install						2>&1 | tee "log-3-install.txt"
+		-DWITH_INSTALL_PORTABLE=OFF			#2>&1 | tee "log-1-ccmake.txt"
+	make -j8						#2>&1 | tee "log-2-make.txt"
+	make install						#2>&1 | tee "log-3-install.txt"
 }
 
 case $1 in
