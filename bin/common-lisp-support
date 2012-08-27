@@ -191,6 +191,18 @@ export PATH
 export LANG
 }
 
+action_setup_quicklisp() {
+	QLB="/opt/lisp/quicklisp"
+	mkdir -p "${QLB}"
+	cd "${QLB}"
+	wget -nc -O http://beta.quicklisp.org/quicklisp.lisp
+	sbcl --load quicklisp.lisp
+	# * (quicklisp-quickstart:install)
+	# * (ql:add-to-init-file)
+	# * (ql:quickload "quicklisp-slime-helper")
+	# * (quit)
+}
+
 action_usage() {
 cat <<EOF
 usage: `basename $0` [sbcl-src-install|sbcl-git-install|sbcl-slime-core|help]
@@ -215,6 +227,9 @@ sbcl-git-install|sgi)
 ;;
 sbcl-slime-core|ssc)
 	action_sbcl_generate_slime_core
+;;
+setup-quicklisp|sql)
+	action_setup_quicklisp
 ;;
 help)
 	action_help
