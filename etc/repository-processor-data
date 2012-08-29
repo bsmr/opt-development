@@ -1,5 +1,6 @@
 git	common-lisp.net/cmucl
 git	freedesktop.org/mesa
+git	git.process-one.net/ejabberd
 git	github.com/aicore
 git	github.com/autodoc
 git	github.com/avout
@@ -43,6 +44,7 @@ git	github.com/noir
 git	github.com/one
 git	github.com/otp
 git	github.com/penumbra
+git	github.com/pioneer
 git	github.com/proper
 git	github.com/pyramid
 git	github.com/quoted.erl
