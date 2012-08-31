@@ -7,58 +7,64 @@ EOF
 }
 
 action_setup() {
+	#TIME="/usr/bin/time"
+	TIME=""
 	# Some personal environmen settings
-	#export ERLARCS="${HOME}/Downloads/erlang.org"
-	export ERLARCS="/public/Software/Downloads/erlang.org"
-	#export ERLSBAS="${HOME}/devel/source/system/erlang/otp"
-	export ERLSBAS="${HOME}/source/system/erlang/otp"
-	#export ERLSVER="R14B04"
-	#export ERLSVER="R15B"
-	export ERLSVER="R15B01"
-	#export ERLSVER="git"
-	#http://www.erlang.org/download/otp_src_R15B.tar.gz
-	#export ERLURLD="http://www.erlang.org/download/otp_src_${ERLSVER}.tar.gz"
-	export ERLSNAM="otp_src_${ERLSVER}"
-	export ERLSTAR="${ERLSNAM}.tar.gz"
-	export BUILDTS=$(date --utc '+%Y%m%d-%H%M')
-	export PREFIX="/opt/erlang/otp/${ERLSVER}/${BUILDTS}"
-	#export ERLLINK="/opt/erlang-otp"
+	ERLARCS="/public/Software/Downloads/erlang.org"
+	ERLSBAS=$(mktemp -d --suffix="-erlang-otp")
+	ERLSVER="R15B01"
+	ERLSNAM="otp_src_${ERLSVER}"
+	ERLSTAR="${ERLSNAM}.tar.gz"
+	BUILDTS=$(date --utc '+%Y%m%d-%H%M')
+	OPTERL="/opt/erlang/otp"
+	PREFIX="${OPTERL}/${ERLSVER}/${BUILDTS}"
+	ERLLINK="${OPTERL}/active"
+	TITLE="+++ ACTION:"
 
 	# Setup the source environment
+	echo "${TITLE} extracking source"
 	test ! -d "${ERLSBAS}" && mkdir -p "${ERLSBAS}"
 	cd "${ERLSBAS}"
-	tar xvf "${ERLARCS}/${ERLSTAR}"
+	tar xf "${ERLARCS}/${ERLSTAR}"
 	cd "${ERLSNAM}"
 
-	# change to source
-	#cd "/home/family/bsmr/source/repos/github.com/otp"
-
 	# Some needed enviroment settings
-	export ERL_TOP="`pwd`"
+	echo "${TITLE} setting environment"
+	export ERL_TOP=$(pwd)
 	export PATH="$ERL_TOP/bin:$PATH"
 	export LANG="C"
 
-	# special git actions
-	#./otp_build autoconf
-
 	# Configure
-	/usr/bin/time ./configure --prefix="${PREFIX}" --with-gmp 2>&1 | tee "log-1-configure.txt"
+	echo "${TITLE} configure"
+	${TIME} ./configure --prefix="${PREFIX}" --with-gmp
 
 	# Compile and install
-	/usr/bin/time make all		2>&1 | tee "log-2-build_system.txt"
-	/usr/bin/time make install	2>&1 | tee "log-3-install_system.txt"
-	/usr/bin/time make docs		2>&1 | tee "log-4-build_docs.txt"
-	/usr/bin/time make install-docs	2>&1 | tee "log-5-install_docs.txt"
+	for ACT in "all" "install" "docs" "install-docs"
+	do
+		echo "${TITLE} make ${ACT}"
+		${TIME} make ${ACT}
+	done
 
 	# Create a directory with shortcuts to all PDFs
-	cd ${PREFIX}
-	mkdir pdf
-	cd pdf
+	echo "${TITLE} link PDFs"
+	cd "${PREFIX}"
+	mkdir "pdf"
+	cd "pdf"
 	find "${PREFIX}/lib/erlang" -type f -name '*.pdf' -exec ln -sf "{}" \;
 
 	# make life easier
-	#test -h "${ERLLINK}" && rm -f "${ERLLINK}"
-	#ln -sf "${PREFIX}" "${ERLLINK}"
+	echo "${TITLE} setup link"
+	if [ -n "${ERLLINK}" ]
+	then
+		if [ -h "${ERLLINK}" ]
+		then
+			rm -f "${ERLLINK}"
+		fi
+		ln -sf "${PREFIX}" "${ERLLINK}"
+	fi
+
+	echo "${TITLE} cleanup"
+	rm -rf "${ERLSBAS}"
 }
 
 case $1 in

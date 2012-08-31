@@ -40,7 +40,7 @@ for X in						\
 		"-/opt/racket"				\
 		"-/opt/lua"				\
 		"/opt/qt"				\
-		"/opt/wx"				\
+		"-/opt/wx"				\
 		"/opt/scheme/gambit"			\
 		"/opt/scheme/mit"			\
 		"/opt/scheme/racket"			\
