@@ -12,7 +12,7 @@ action_setup() {
 	# Some personal environmen settings
 	ERLARCS="/public/Software/Downloads/erlang.org"
 	ERLSBAS=$(mktemp -d --suffix="-erlang-otp")
-	ERLSVER="R15B01"
+	ERLSVER="R15B02"
 	ERLSNAM="otp_src_${ERLSVER}"
 	ERLSTAR="${ERLSNAM}.tar.gz"
 	BUILDTS=$(date --utc '+%Y%m%d-%H%M')
