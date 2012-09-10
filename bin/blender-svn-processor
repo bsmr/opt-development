@@ -24,7 +24,7 @@ action_update() {
 	cd "${BLENDER_SVN_BUILD}"
 	cmake	"${BLENDER_SVN_SOURCE}"				\
 		-DCMAKE_INSTALL_PREFIX=/opt/blender/svn		\
-		-DWITH_CYCLES=OFF
+		-DWITH_CYCLES=OFF				\
 		-DWITH_INSTALL_PORTABLE=OFF			#2>&1 | tee "log-1-ccmake.txt"
 	make -j8						#2>&1 | tee "log-2-make.txt"
 	make install						#2>&1 | tee "log-3-install.txt"

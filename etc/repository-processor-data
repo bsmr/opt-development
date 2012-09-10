@@ -1,6 +1,8 @@
 git	common-lisp.net/cmucl
 git	freedesktop.org/mesa
 git	git.process-one.net/ejabberd
+git	github.com/d3-api-docs
+git	github.com/glsl-mode
 git	github.com/aicore
 git	github.com/autodoc
 git	github.com/avout
@@ -66,6 +68,7 @@ git	kenai.com/jogl-demos
 git	repo.or.cz/cl-glfw
 git	sourceforge.net/freemind
 git	sourceforge.net/fwbuilder
+git	sourceforge.net/glew
 git	sourceforge.net/sbcl
 hg	code.google.com/plovr
 hg	googlecode.com/vim
@@ -81,5 +84,6 @@ svn	googlecode.com/closure-linter-read-only
 svn	googlecode.com/closure-templates-read-only
 svn	googlecode.com/jmonkeyengine-read-only
 svn	googlecode.com/jwebsocket-read-only
+svn	googlecode.com/oglsuperbible5-read-only
 svn	googlecode.com/weberknecht-read-only
 svn	googlecode.com/wonderland
