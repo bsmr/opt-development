@@ -59,35 +59,45 @@ action_install_bin_sbcl() {
 	# cleanup/remove bin directory
 }
 
+# dependencies
+# build-essential
+# zlib1g-dev
+# texinfo
+#*texlive-full
+
 action_install_sbcl_from_source() {
-	# extract source to install directory
-	#tar xf ~/downloads/sbcl.org/sbcl-1.0.57-source.tar.bz2
-	cd "/home/bm/install/sbcl-1.0.57"
-	export LANG="C"
-	export SBCL_BASE="/opt/lisp/sbcl/active"
-	export SBCL_HOME="/opt/lisp/sbcl/active/lib/sbcl"
-	export PATH="${SBCL_BASE}/bin:$PATH"
-	sh make.sh --fancy --prefix="/opt/lisp/sbcl/1.0.57"	2>&1 | tee "log-1-build.txt"
-	(cd tests && sh run-tests.sh)				2>&1 | tee "log-2-tests.txt"
-	(cd doc/manual && make)					2>&1 | tee "log-3-manuals.txt"
-	unset INSTALL_ROOT
-	unset SBCL_HOME
-	sh install.sh						2>&1 | tee "log-4-install.txt"
-	#
-	# cleanup
-	cd ..
-	rm -rf sbcl-1.0.57/
-	# 2nd pass
-	tar xf "~/downloads/sbcl.org/sbcl-1.0.57-source.tar.bz2"
-	cd "sbcl-1.0.57"
-	export LANG="C"
-	export SBCL_BASE="/opt/lisp/sbcl/active"
-	export PATH="${SBCL_BASE}/bin:$PATH"
-	sh make.sh --fancy --prefix="/opt/lisp/sbcl/1.0.57"	2>&1 | tee "log-1-build.txt"
-	(cd tests && sh run-tests.sh)				2>&1 | tee "log-2-tests.txt"
-	(cd doc/manual && make)					2>&1 | tee "log-3-manuals.txt"
-	sh install.sh						2>&1 | tee "log-4-install.txt"
-	# keep logs / cleanup
+	# --- preperations --------------------------------------------
+	LANG="C"
+	SBCLVERSION="1.0.58"
+	DLBASE="/home/family/bsmr/Downloads/sbcl.org"
+	SBCLTARBALL="${DLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
+	SBCLTMPSRCDIR=$(mktemp -d --suffix=-sbclbuild)
+	SBCLSRCDIR="sbcl-${SBCLVERSION}"
+	SBCLOPTDIR="/opt/lisp/sbcl/${SBCLVERSION}"
+	echo "*** Working in : \"${SBCLTMPSRCDIR}\""
+	cd "${SBCLTMPSRCDIR}"
+	# --- build area ----------------------------------------------
+	for L in 1 2 3
+	do
+		tar xvf "${SBCLTARBALL}"
+		cd "${SBCLSRCDIR}"
+		if [ -d "${SBCLOPTDIR}/bin" ]
+		then
+			PATH="${SBCLOPTDIR}/bin:$PATH"
+		fi
+		sh make.sh --fancy --prefix="${SBCLOPTDIR}"
+		if [ "${L}" = "3" ]
+		then
+			(cd tests && sh run-tests.sh)
+			(cd doc/manual && make)
+		fi
+		sh install.sh
+		cd ..
+		rm -rf "${SBCLSRCDIR}"
+	done
+	# --- cleanup -------------------------------------------------
+	cd "/tmp"
+	rm -rf "${SBCLTMPSRCDIR}"
 }
 
 action_install_sbcl_from_git() {
@@ -157,7 +167,7 @@ action_install_emacs() {
 	#
 	#sudo aptitude install libgtk-3-dev libxaw7-dev libjpeg-dev libgif-dev libtiff4-dev
 	#sudo aptitude install libotf-dev libm17n-dev libxml2-dev libgpm-dev libdbus-1-dev librsvg2-dev imagemagick libgconf2-dev
-	#
+	# libncurses5-dev libgnutls-dev libmagickwand-dev
 	tar xf "${DL}/emacs-${EV}.tar.bz2"
 	mkdir "emacs-${EV}-build"
 	cd "emacs-${EV}-build"
@@ -220,7 +230,8 @@ EOF
 
 case $1 in
 sbcl-src-install|ssi)
-	action_sbcl_src_install
+	#action_sbcl_src_install
+	action_install_sbcl_from_source
 ;;
 sbcl-git-install|sgi)
 	action_install_sbcl_from_git
