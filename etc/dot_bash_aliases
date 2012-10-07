@@ -7,6 +7,8 @@ alias development-environment='. /opt/development/etc/setup-environment'
 alias emacs-cleanup-files='find . -name '"'"'*~'"'"' -execdir rm -v '"'"'{}'"'"' \;'
 alias emacs-edit-clj='emacs `find . -type f -name '"'"'*.clj'"'"'`'
 
+alias camera-support='$HOME/bin/camera-support'
+
 #
 # End Of File
 #

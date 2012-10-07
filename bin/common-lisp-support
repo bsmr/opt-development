@@ -68,7 +68,7 @@ action_install_bin_sbcl() {
 action_install_sbcl_from_source() {
 	# --- preperations --------------------------------------------
 	LANG="C"
-	SBCLVERSION="1.0.58"
+	SBCLVERSION="1.1.0"
 	DLBASE="/home/family/bsmr/Downloads/sbcl.org"
 	SBCLTARBALL="${DLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
 	SBCLTMPSRCDIR=$(mktemp -d --suffix=-sbclbuild)
