@@ -11,16 +11,17 @@ action_download_emacs() {
 }
 
 action_download_sbcl() {
-	if [ ! -d "$SBCLDLBASE" ] ; then mkdir -p "$SBCLDLBASE" ; fi
-	cd "$SBCLDLBASE"
+	SBCLV="1.1.0"
+	#if [ ! -d "$SBCLDLBASE" ] ; then mkdir -p "$SBCLDLBASE" ; fi
+	#cd "$SBCLDLBASE"
 	for F in 						\
-		"sbcl-1.0.57-source.tar.bz2"			\
-		"sbcl-1.0.57-x86-64-linux-binary.tar.bz2"	\
-		"sbcl-1.0.57-x86-linux-binary.tar.bz2"		\
+		"sbcl-${SBCLV}-source.tar.bz2"			\
+		"sbcl-${SBCLV}-x86-64-linux-binary.tar.bz2"	\
+		"sbcl-${SBCLV}-x86-linux-binary.tar.bz2"	\
 		""
 	do
 		if [ -z "$F" ] ; then continue ; fi
-		DL="http://downloads.sourceforge.net/project/sbcl/sbcl/1.0.57/${F}"
+		DL="http://downloads.sourceforge.net/project/sbcl/sbcl/${SBCLV}/${F}"
 		wget -4 -nc "${DL}"
 	done
 }
@@ -69,7 +70,8 @@ action_install_sbcl_from_source() {
 	# --- preperations --------------------------------------------
 	LANG="C"
 	SBCLVERSION="1.1.0"
-	DLBASE="/home/family/bsmr/Downloads/sbcl.org"
+	#DLBASE="/home/family/bsmr/Downloads/sbcl.org"
+	DLBASE="/home/ADESTIS/bm/Downloads/sbcl.org"
 	SBCLTARBALL="${DLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
 	SBCLTMPSRCDIR=$(mktemp -d --suffix=-sbclbuild)
 	SBCLSRCDIR="sbcl-${SBCLVERSION}"
