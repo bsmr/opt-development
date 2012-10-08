@@ -1,63 +1,106 @@
 #!/bin/bash
+#######################################################################
+#
+# common-lisp-support
+#
+# support tool for a common lisp installation
+# currently only sbcl is used
+#
+#######################################################################
 
-DLBASE="/home/bm/downloads"
-GNUDLBASE="${DLBASE}/gnu.org"
-SBCLDLBASE="${DLBASE}/sbcl.org"
+USR_CFG="${HOME}/.common-lisp-support.cfg"
+
+action_cls_create_config() {
+cat >"${USR_CFG}" <<EOF
+#######################################################################
+#
+# User configuration file for common-lisp-support
+#
+#######################################################################
+
+DLBASE="${HOME}/Downloads"
+
+#######################################################################
+#
+# End Of File
+#
+#######################################################################
+EOF
+}
+
+action_cls_check_for_config() {
+if [ ! -f "${USR_CFG}" ]
+then
+	action_cls_create_config
+	editor "${USR_CFG}"
+fi
+}
+
+action_cls_source_config() {
+action_cls_check_for_config
+if [ -f "${USR_CFG}" ]
+then
+	source "${USR_CFG}"
+fi
+}
 
 action_download_emacs() {
-	if [ ! -d "$GNUDLBASE" ] ; then mkdir -p "$GNUDLBASE" ; fi
-	cd "$GNUDLBASE"
-	wget -4 -nc "ftp://ftp.gnu.org/gnu/emacs/emacs-24.1.tar.bz2"
+if [ ! -d "$GNUDLBASE" ] ; then mkdir -p "$GNUDLBASE" ; fi
+cd "$GNUDLBASE"
+wget -4 -nc "ftp://ftp.gnu.org/gnu/emacs/emacs-24.1.tar.bz2"
 }
 
 action_download_sbcl() {
-	SBCLV="1.1.0"
-	#if [ ! -d "$SBCLDLBASE" ] ; then mkdir -p "$SBCLDLBASE" ; fi
-	#cd "$SBCLDLBASE"
-	for F in 						\
-		"sbcl-${SBCLV}-source.tar.bz2"			\
-		"sbcl-${SBCLV}-x86-64-linux-binary.tar.bz2"	\
-		"sbcl-${SBCLV}-x86-linux-binary.tar.bz2"	\
-		""
-	do
-		if [ -z "$F" ] ; then continue ; fi
-		DL="http://downloads.sourceforge.net/project/sbcl/sbcl/${SBCLV}/${F}"
-		wget -4 -nc "${DL}"
-	done
+SBCLV="1.1.0"
+if [ ! -d "${SBCLDLBASE}" ]
+then
+	mkdir -p "${SBCLDLBASE}"
+fi
+cd "${SBCLDLBASE}"
+for F in 						\
+	"sbcl-${SBCLV}-source.tar.bz2"			\
+	"sbcl-${SBCLV}-x86-64-linux-binary.tar.bz2"	\
+	"sbcl-${SBCLV}-x86-linux-binary.tar.bz2"	\
+	""
+do
+	if [ -z "$F" ] ; then continue ; fi
+	DL="http://downloads.sourceforge.net/project/sbcl/sbcl/${SBCLV}/${F}"
+	wget -4 -nc "${DL}"
+done
 }
 
 action_install_bin_sbcl() {
-	SBCLBINARC=""
-	SBCLBINDIR=""
-	case $(uname -m) in
-	x86_64)
-		SBCLBINARC="sbcl-1.0.57-x86-64-linux-binary.tar.bz2"
-		SBCLBINDIR="sbcl-1.0.57-x86-64-linux"
-		;;
-	x86)
-		SBCLBINARC="sbcl-1.0.57-x86-linux-binary.tar.bz2"
-		SBCLBINDIR="sbcl-1.0.57-x86-linux"
-		;;
-	esac
-	if [ -z "$SBCLBINARC" ]
-	then
-		echo "Error: failed to assign SBCL binary archive!"
-		exit 1
-	fi
-	SBCLBINDLPATH="${SBCLDLBASE}/${SBCLBINARC}"
-	if [ ! -f "${SBCLBINDLPATH}" ]
-	then
-		echo "Error: can't access file \"${SBCLBINDLPATH}\"!"
-		exit 1
-	fi
-	# create target install temp directory
-	# change into target install temp directory
-	# setup install environment
-	LANG="C"
-	INSTALL_ROOT="/opt/lisp/sbcl/1.0.57" sh install.sh
-	# setup link
-	ln -sf "/opt/lisp/sbcl/1.0.57" "/opt/lisp/sbcl/active"
-	# cleanup/remove bin directory
+SBCLBINARC=""
+SBCLBINDIR=""
+case $(uname -m) in
+x86_64)
+	SBCLBINARC="sbcl-1.0.57-x86-64-linux-binary.tar.bz2"
+	SBCLBINDIR="sbcl-1.0.57-x86-64-linux"
+	;;
+x86)
+	SBCLBINARC="sbcl-1.0.57-x86-linux-binary.tar.bz2"
+	SBCLBINDIR="sbcl-1.0.57-x86-linux"
+	;;
+esac
+if [ -z "$SBCLBINARC" ]
+then
+	echo "Error: failed to assign SBCL binary archive!"
+	exit 1
+fi
+SBCLBINDLPATH="${SBCLDLBASE}/${SBCLBINARC}"
+if [ ! -f "${SBCLBINDLPATH}" ]
+then
+	echo "Error: can't access file \"${SBCLBINDLPATH}\"!"
+	exit 1
+fi
+# create target install temp directory
+# change into target install temp directory
+# setup install environment
+LANG="C"
+INSTALL_ROOT="/opt/lisp/sbcl/1.0.57" sh install.sh
+# setup link
+ln -sf "/opt/lisp/sbcl/1.0.57" "/opt/lisp/sbcl/active"
+# cleanup/remove bin directory
 }
 
 # dependencies
@@ -67,79 +110,77 @@ action_install_bin_sbcl() {
 #*texlive-full
 
 action_install_sbcl_from_source() {
-	# --- preperations --------------------------------------------
-	LANG="C"
-	SBCLVERSION="1.1.0"
-	#DLBASE="/home/family/bsmr/Downloads/sbcl.org"
-	DLBASE="/home/ADESTIS/bm/Downloads/sbcl.org"
-	SBCLTARBALL="${DLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
-	SBCLTMPSRCDIR=$(mktemp -d --suffix=-sbclbuild)
-	SBCLSRCDIR="sbcl-${SBCLVERSION}"
-	SBCLOPTDIR="/opt/lisp/sbcl/${SBCLVERSION}"
-	echo "*** Working in : \"${SBCLTMPSRCDIR}\""
-	cd "${SBCLTMPSRCDIR}"
-	# --- build area ----------------------------------------------
-	for L in 1 2 3
-	do
-		tar xvf "${SBCLTARBALL}"
-		cd "${SBCLSRCDIR}"
-		if [ -d "${SBCLOPTDIR}/bin" ]
-		then
-			PATH="${SBCLOPTDIR}/bin:$PATH"
-		fi
-		sh make.sh --fancy --prefix="${SBCLOPTDIR}"
-		if [ "${L}" = "3" ]
-		then
-			(cd tests && sh run-tests.sh)
-			(cd doc/manual && make)
-		fi
-		sh install.sh
-		cd ..
-		rm -rf "${SBCLSRCDIR}"
-	done
-	# --- cleanup -------------------------------------------------
-	cd "/tmp"
-	rm -rf "${SBCLTMPSRCDIR}"
+# --- preperations --------------------------------------------
+LANG="C"
+SBCLVERSION="1.1.0"
+SBCLTARBALL="${SBCLDLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
+SBCLTMPSRCDIR=$(mktemp -d --suffix=-sbclbuild)
+SBCLSRCDIR="sbcl-${SBCLVERSION}"
+SBCLOPTDIR="/opt/lisp/sbcl/${SBCLVERSION}"
+echo "*** Working in : \"${SBCLTMPSRCDIR}\""
+cd "${SBCLTMPSRCDIR}"
+# --- build area ----------------------------------------------
+for L in 1 2 3
+do
+	tar xvf "${SBCLTARBALL}"
+	cd "${SBCLSRCDIR}"
+	if [ -d "${SBCLOPTDIR}/bin" ]
+	then
+		PATH="${SBCLOPTDIR}/bin:$PATH"
+	fi
+	sh make.sh --fancy --prefix="${SBCLOPTDIR}"
+	if [ "${L}" = "3" ]
+	then
+		(cd tests && sh run-tests.sh)
+		(cd doc/manual && make)
+	fi
+	sh install.sh
+	cd ..
+	rm -rf "${SBCLSRCDIR}"
+done
+# --- cleanup -------------------------------------------------
+cd "/tmp"
+rm -rf "${SBCLTMPSRCDIR}"
 }
 
 action_install_sbcl_from_git() {
-	TMPBASE=$(mktemp -d --suffix='-sbcl-install')
-	TS=$(date --utc '+%Y%m%d-%H%M%S')
-	OLD_PATH="$PATH"
-	export LANG="C"
-	SBD="/opt/lisp/sbcl"
-	SGA="${SBD}/active"
-	SGV="${SBD}/git/${TS}"
-	if [ ! -d "${SGV}" ] ; then mkdir -p "${SGV}" ; fi
-	cd "${TMPBASE}"
-	# pass 1
-	git clone https://github.com/sbcl/sbcl.git
-	cd "sbcl"
-	export SBCL_BASE="${SGA}"
-	export PATH="${SBCL_BASE}/bin:$OLD_PATH"
-	sh make.sh --fancy --prefix="${SGV}"	#2>&1 | tee "log-1-build.txt"
-	(cd tests && sh run-tests.sh)		#2>&1 | tee "log-2-tests.txt"
-	(cd doc/manual && make)			#2>&1 | tee "log-3-manuals.txt"
-	sh install.sh				#2>&1 | tee "log-4-install.txt"
-	cd ..
-	rm -rf "sbcl"
-	# pass 2
-	git clone https://github.com/sbcl/sbcl.git
-	cd "sbcl"
-	export SBCL_BASE="${SGV}"
-	export PATH="${SBCL_BASE}/bin:$OLD_PATH"
-	sh make.sh --fancy --prefix="${SGV}"	#2>&1 | tee "log-1-build.txt"
-	(cd tests && sh run-tests.sh)		#2>&1 | tee "log-2-tests.txt"
-	(cd doc/manual && make)			#2>&1 | tee "log-3-manuals.txt"
-	sh install.sh				#2>&1 | tee "log-4-install.txt"
-	cd ..
-	rm -rf "sbcl"
-	# cleanup
-	cd /tmp
-	rm -rf "${TMPBASE}"
-	PATH="$OLD_PATH"
-	export PATH
-	cat <<EOF
+TMPBASE=$(mktemp -d --suffix='-sbcl-install')
+TS=$(date --utc '+%Y%m%d-%H%M%S')
+OLD_PATH="$PATH"
+export LANG="C"
+SBD="/opt/lisp/sbcl"
+SGA="${SBD}/active"
+SGV="${SBD}/git/${TS}"
+if [ ! -d "${SGV}" ] ; then mkdir -p "${SGV}" ; fi
+cd "${TMPBASE}"
+# pass 1
+git clone https://github.com/sbcl/sbcl.git
+cd "sbcl"
+export SBCL_BASE="${SGA}"
+export PATH="${SBCL_BASE}/bin:$OLD_PATH"
+sh make.sh --fancy --prefix="${SGV}"
+(cd tests && sh run-tests.sh)
+(cd doc/manual && make)
+sh install.sh
+cd ..
+rm -rf "sbcl"
+# pass 2
+git clone https://github.com/sbcl/sbcl.git
+cd "sbcl"
+export SBCL_BASE="${SGV}"
+export PATH="${SBCL_BASE}/bin:$OLD_PATH"
+sh make.sh --fancy --prefix="${SGV}"
+(cd tests && sh run-tests.sh)
+(cd doc/manual && make)
+sh install.sh
+cd ..
+rm -rf "sbcl"
+# cleanup
+cd /tmp
+rm -rf "${TMPBASE}"
+PATH="$OLD_PATH"
+export PATH
+cat <<EOF
 #######################################################################
 #
 #	Don't forget to issue the following command:
@@ -150,36 +191,36 @@ EOF
 }
 
 action_sbcl_generate_slime_core() {
-	SBD="/opt/lisp/sbcl"
-	OLD_PATH="$PATH"
-	PATH="${SBD}/active/bin:${PATH}"
-	cd "${SBD}/slime"
-	sbcl --no-sysinit --no-userinit --load /opt/development/etc/sbcl-swank-core.lisp
+SBD="/opt/lisp/sbcl"
+OLD_PATH="$PATH"
+PATH="${SBD}/active/bin:${PATH}"
+cd "${SBD}/slime"
+sbcl --no-sysinit --no-userinit --load /opt/development/etc/sbcl-swank-core.lisp
 }
 
 action_install_slime() {
-	cd "/opt/lisp"
-	cvs -d :pserver:anonymous:anonymous@common-lisp.net:/project/slime/cvsroot co slime
+cd "/opt/lisp"
+cvs -d :pserver:anonymous:anonymous@common-lisp.net:/project/slime/cvsroot co slime
 }
 
 action_install_emacs() {
-	#
-	DL="~/downloads/gnu.org"
-	EV="24.1"
-	#
-	#sudo aptitude install libgtk-3-dev libxaw7-dev libjpeg-dev libgif-dev libtiff4-dev
-	#sudo aptitude install libotf-dev libm17n-dev libxml2-dev libgpm-dev libdbus-1-dev librsvg2-dev imagemagick libgconf2-dev
-	# libncurses5-dev libgnutls-dev libmagickwand-dev
-	tar xf "${DL}/emacs-${EV}.tar.bz2"
-	mkdir "emacs-${EV}-build"
-	cd "emacs-${EV}-build"
-	export LANG="C"
-	../emacs-${EV}/configure --prefix=/opt/emacs/${EV}	#2>&1 | tee "log-1-configure.txt"
-	make -j8 all						#2>&1 | tee "log-2-build.txt"
-	make install						#2>&1 | tee "log-3-install.txt"
-	cd ..
-	rm -rf "emacs-${EV}*"
-	echo '*** => ln -sf "/opt/emacs/${EV}" "/opt/emacs/active"'
+#
+DL="${DLBASE}/gnu.org"
+EV="24.1"
+#
+#sudo aptitude install libgtk-3-dev libxaw7-dev libjpeg-dev libgif-dev libtiff4-dev
+#sudo aptitude install libotf-dev libm17n-dev libxml2-dev libgpm-dev libdbus-1-dev librsvg2-dev imagemagick libgconf2-dev
+# libncurses5-dev libgnutls-dev libmagickwand-dev
+tar xf "${DL}/emacs-${EV}.tar.bz2"
+mkdir "emacs-${EV}-build"
+cd "emacs-${EV}-build"
+export LANG="C"
+../emacs-${EV}/configure --prefix=/opt/emacs/${EV}
+make -j8 all
+make install
+cd ..
+rm -rf "emacs-${EV}*"
+echo '*** => ln -sf "/opt/emacs/${EV}" "/opt/emacs/active"'
 }
 
 action_sbcl_src_install() {
@@ -204,33 +245,62 @@ export LANG
 }
 
 action_setup_quicklisp() {
-	QLB="/opt/lisp/quicklisp"
-	mkdir -p "${QLB}"
-	cd "${QLB}"
-	wget -nc -O http://beta.quicklisp.org/quicklisp.lisp
-	sbcl --load quicklisp.lisp
-	# * (quicklisp-quickstart:install)
-	# * (ql:add-to-init-file)
-	# * (ql:quickload "quicklisp-slime-helper")
-	# * (quit)
+QLB="/opt/lisp/quicklisp"
+mkdir -p "${QLB}"
+cd "${QLB}"
+wget -nc -O http://beta.quicklisp.org/quicklisp.lisp
+QLL="quicklisp.lisp"
+if [ -f "${QLL}" ]
+then
+#sbcl --load quicklisp.lisp
+# * (quicklisp-quickstart:install)
+# * (ql:add-to-init-file)
+# * (ql:quickload "quicklisp-slime-helper")
+# * (quit)
+	SQLL="/opt/development/etc/setup-quicklisp.lisp"
+	if [ -f "${SQLL}" ]
+	then
+		sbcl --load "${QLL}"
+	else
+		sbcl --load "${QLL}" --load "${SQLL}"
+	fi
+else
+	echo "ERROR: can't access \"quicklisp.lisp\"!"
+	exit 1
+fi
 }
 
 action_usage() {
+BN=$(basename $0)
 cat <<EOF
-usage: `basename $0` [sbcl-src-install|sbcl-git-install|sbcl-slime-core|help]
+usage: ${BN} [ACTION]
+	ACTION: sbcl-download   | sbcl-src-install | sbcl-git-install |
+                sbcl-slime-core | setup-quicklisp  | help
 EOF
 }
 
 action_help() {
 	action_usage
 cat <<EOF
-	sbcl-src-install [ssi]: install sbcl from source
-	sbcl-git-install [sgi]: install sbcl from git repository
-	sbcl-slime-core  [ssc]: generate a core for fow sbcl-slime
+	sbcl-download    [ sd  ]: download sbcl sources and binaries
+	sbcl-src-install [ ssi ]: install sbcl from source
+	sbcl-git-install [ sgi ]: install sbcl from git repository
+	sbcl-slime-core  [ ssc ]: generate a core for fow sbcl-slime
+	setup-quicklisp  [ sql ]: setup quicklisp
+	help             [ ?   ]: this help text
 EOF
 }
 
+# === main entry point ================================================
+action_cls_source_config
+
+GNUDLBASE="${DLBASE}/gnu.org"
+SBCLDLBASE="${DLBASE}/sbcl.org"
+
 case $1 in
+sbcl-download|sd)
+	action_download_sbcl
+;;
 sbcl-src-install|ssi)
 	#action_sbcl_src_install
 	action_install_sbcl_from_source
@@ -244,7 +314,7 @@ sbcl-slime-core|ssc)
 setup-quicklisp|sql)
 	action_setup_quicklisp
 ;;
-help)
+help|-h|--help|?)
 	action_help
 ;;
 *)
@@ -255,6 +325,8 @@ esac
 
 exit 0
 
+#######################################################################
 #
 # End Of File
 #
+#######################################################################
