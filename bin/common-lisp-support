@@ -112,7 +112,7 @@ ln -sf "/opt/lisp/sbcl/1.0.57" "/opt/lisp/sbcl/active"
 action_install_sbcl_from_source() {
 # --- preperations --------------------------------------------
 LANG="C"
-SBCLVERSION="1.1.0"
+SBCLVERSION="1.1.1"
 SBCLTARBALL="${SBCLDLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
 SBCLTMPSRCDIR=$(mktemp -d --suffix=-sbclbuild)
 SBCLSRCDIR="sbcl-${SBCLVERSION}"
