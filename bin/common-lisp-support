@@ -51,7 +51,13 @@ wget -4 -nc "ftp://ftp.gnu.org/gnu/emacs/emacs-24.1.tar.bz2"
 }
 
 action_download_sbcl() {
-SBCLV="1.1.0"
+SBCLV="$1"
+#SBCLV="1.1.0"
+if [ -z "$SBCLV" ]
+then
+	echo "Error: no sbcl version specified!"
+	exit 1
+fi
 if [ ! -d "${SBCLDLBASE}" ]
 then
 	mkdir -p "${SBCLDLBASE}"
@@ -110,10 +116,22 @@ ln -sf "/opt/lisp/sbcl/1.0.57" "/opt/lisp/sbcl/active"
 #*texlive-full
 
 action_install_sbcl_from_source() {
+# --- environment checks --------------------------------------
+#SBCLVERSION="1.1.1"
+SBCLVERSION="$1"
+if [ -z "$SBCLVERSION" ]
+then
+	echo "Error: no sbcl versionspecified!"
+	exit 1
+fi
+SBCLTARBALL="${SBCLDLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
+if [ ! -f "$SBCLTARBALL" ]
+then
+	echo "Error: can't access sbcl ${SBCLVERSION} tarball!"
+	exit 1
+fi
 # --- preperations --------------------------------------------
 LANG="C"
-SBCLVERSION="1.1.1"
-SBCLTARBALL="${SBCLDLBASE}/sbcl-${SBCLVERSION}-source.tar.bz2"
 SBCLTMPSRCDIR=$(mktemp -d --suffix=-sbclbuild)
 SBCLSRCDIR="sbcl-${SBCLVERSION}"
 SBCLOPTDIR="/opt/lisp/sbcl/${SBCLVERSION}"
@@ -299,11 +317,10 @@ SBCLDLBASE="${DLBASE}/sbcl.org"
 
 case $1 in
 sbcl-download|sd)
-	action_download_sbcl
+	action_download_sbcl "$2"
 ;;
 sbcl-src-install|ssi)
-	#action_sbcl_src_install
-	action_install_sbcl_from_source
+	action_install_sbcl_from_source "$2"
 ;;
 sbcl-git-install|sgi)
 	action_install_sbcl_from_git
