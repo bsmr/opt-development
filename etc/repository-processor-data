@@ -19,6 +19,8 @@ git	github.com/coffee-script
 git	github.com/compojure
 git	github.com/cowboy
 git	github.com/cowboy_examples
+git	github.com/bullet
+git	github.com/ranch
 git	github.com/cyclone-physics
 git	github.com/dante
 git	github.com/DOOM-3

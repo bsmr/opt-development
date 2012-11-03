@@ -13,6 +13,7 @@ for X in						\
 		"/opt/llvm"				\
 		"/opt/cmake"				\
 		"/opt/erlang/otp"			\
+		"/opt/erlang/rebar"			\
 		"/opt/lisp/sbcl"			\
 		"/opt/lisp/clisp"			\
 		"/opt/lisp/ecl"				\
