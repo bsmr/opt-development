@@ -1,0 +1,142 @@
+#!/bin/bash
+
+BN=$(basename $0)
+
+action_usage() {
+cat <<XEOF
+usage: ${BN} [ setup | help ]
+XEOF
+}
+
+action_help() {
+action_usage
+cat <<XEOF
+	--- setup ---------------------------------------------
+	The "setup" command needs two arguments: the version
+	and the patchlevel:
+
+		> ${BN} setup <VERSION> <PATCHLEVEL>
+
+	For example:
+
+		> ${BN} setup 1.9.3 286
+
+	-------------------------------------------------------
+XEOF
+}
+
+action_prerequisites() {
+sudo apt-get install            \
+        build-essential         \
+        libreadline-dev         \
+        libssl-dev              \
+        libyaml-dev             \
+        libffi-dev              \
+        libncurses5-dev         \
+        libdb-dev               \
+        libgdbm-dev
+}
+
+action_fetch_ruby() {
+# ftp.ruby-lang.org
+# ftp://ftp.ruby-lang.org/pub/ruby/1.9/
+# /pub/ruby/1.9
+# ruby-1.9.3-p286.tar.bz2
+if [ ! -d "${KSR_ARCS}" ]
+then
+	mkdir -p "${KSR_ARCS}"
+fi
+if [ -f "${KSR_ARCS}/${RT}" ]
+then
+	echo "Skipping download."
+	return
+fi
+RM=$(echo "${RV}" | awk -F. '{ printf "%s.%s", $1, $2}')
+cd "${KSR_ARCS}"
+wget -nc "ftp://ftp.ruby-lang.org/pub/ruby/${RM}/${RT}"
+}
+
+action_compile_ruby() {
+KSR_TEMP=$(mktemp -d --suffix=-ruby-lang-kickstart)
+cd "${KSR_TEMP}"
+tar xvf "${KSR_ARCS}/${RT}"
+mkdir "${RB}"
+cd "${RB}"
+
+NUM_CPUS=$(cat /proc/cpuinfo | grep processor | wc -l)
+MO=""
+if [ "$?" = "0" ]
+then
+	MO="-j${NUM_CPUS}"
+fi
+
+LANG=C
+
+"../${RN}/configure" --enable-shared --prefix="${RD}"	\
+	&& make "${MO}" all				\
+	&& make test					\
+	&& make install					\
+	&& cat <<KSREOF
+*** Add this to Your environment: *************************************
+PATH="/opt/ruby/${RV}/bin:\$PATH"
+MANPATH="/opt/ruby/${RV}/share/man"
+export PATH MANPATH
+***********************************************************************
+KSREOF
+
+cd "/tmp"
+rm -rf "${KSR_TEMP}"
+}
+
+action_setup() {
+RV="$1"
+RP="$2"
+
+if [ -z "${RV}" ]
+then
+	cat <<KSREOF
+Error: no ruby version specified!
+       use something like "1.9.3" (without the quotes)
+KSREOF
+	exit 1
+fi
+
+if [ -z "${RP}" ]
+then
+	cat <<KSREOF
+Error: no ruby patchlevel specified!
+       use something like "286" (without the quotes)
+KSREOF
+	exit 1
+fi
+
+KSR_ARCS="$HOME/arcs/ruby-lang.org"
+RN="ruby-${RV}-p${RP}"
+RT="${RN}.tar.bz2"
+RS="${RN}"
+RB="${RN}-build"
+RD="/opt/ruby/${RV}"
+
+action_prerequisites
+action_fetch_ruby	"${RV}" "${RP}"
+action_compile_ruby	"${RV}" "${RP}"
+}
+
+case $1 in
+s|setup)
+	action_setup "$2" "$3"
+;;
+h|help)
+	action_help
+;;
+*)
+	action_usage
+	exit 1
+;;
+esac
+
+exit 0
+
+#
+# End Of File
+#
