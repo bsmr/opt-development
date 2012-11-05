@@ -4,13 +4,15 @@ BN=$(basename $0)
 
 action_usage() {
 cat <<XEOF
-usage: ${BN} [ setup | help ]
+usage: ${BN} [ check | setup | help ]
 XEOF
 }
 
 action_help() {
 action_usage
 cat <<XEOF
+	--- check ---------------------------------------------
+	Are all dependencies to build ruby fulfilled?!
 	--- setup ---------------------------------------------
 	The "setup" command needs two arguments: the version
 	and the patchlevel:
@@ -26,6 +28,8 @@ XEOF
 }
 
 action_prerequisites() {
+sudo apt-get update
+sudo apt-get update
 sudo apt-get install            \
         build-essential         \
         libreadline-dev         \
@@ -57,7 +61,13 @@ wget -nc "ftp://ftp.ruby-lang.org/pub/ruby/${RM}/${RT}"
 }
 
 action_compile_ruby() {
-KSR_TEMP=$(mktemp -d --suffix=-ruby-lang-kickstart)
+KSR_TEMP=$(mktemp -d)
+if [ "$?" != "0" ]
+then
+	echo "Error: failed to created temporary directory \"${KSR_TEMP}\"!"
+	exit 1
+fi
+
 cd "${KSR_TEMP}"
 tar xvf "${KSR_ARCS}/${RT}"
 mkdir "${RB}"
@@ -123,6 +133,9 @@ action_compile_ruby	"${RV}" "${RP}"
 }
 
 case $1 in
+c|check)
+	action_prerequisites
+;;
 s|setup)
 	action_setup "$2" "$3"
 ;;
