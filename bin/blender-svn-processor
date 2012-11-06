@@ -15,19 +15,32 @@ action_update() {
 		cd "${BLENDER_SVN_SOURCE}"
 		svn update
 	fi
-	export LANG="C"
-	#export PATH="/opt/python/active/bin:$PATH"
+	LANG="C"
+	CPUCOUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
+	if [ -n "$CPUCOUNT" -a "$CPUCOUNT" > "1" ]
+	then
+		PM="-j${CPUCOUNT}"
+	fi
+	#PATH="/opt/python/active/bin:$PATH"
+	PYTHON_ROOT_DIR="/opt/python/3.3.0"
+	#PYTHON_LIBRARY="${PYTHON_ROOT_DIR}/lib"
+	#PYTHON_INCLUDE_DIR="${PYTHON_ROOT_DIR}/include"
+	#PYTHON_LIBRARY="${PYTHON_ROOT_DIR}/lib/python3.3"
+	#PYTHON_INCLUDE_DIR="${PYTHON_ROOT_DIR}/include/python3.3m"
+	PATH="${PYTHON_ROOT_DIR}/bin:${PATH}"
 	if [ -d "${BLENDER_SVN_BUILD}" ] ; then
 		rm -rf "${BLENDER_SVN_BUILD}"
 	fi
-	mkdir -p "${BLENDER_SVN_BUILD}"
-	cd "${BLENDER_SVN_BUILD}"
-	cmake	"${BLENDER_SVN_SOURCE}"				\
-		-DCMAKE_INSTALL_PREFIX=/opt/blender/svn		\
-		-DWITH_CYCLES=OFF				\
-		-DWITH_INSTALL_PORTABLE=OFF			#2>&1 | tee "log-1-ccmake.txt"
-	make -j8						#2>&1 | tee "log-2-make.txt"
-	make install						#2>&1 | tee "log-3-install.txt"
+	mkdir -p "${BLENDER_SVN_BUILD}"					\
+	&& cd "${BLENDER_SVN_BUILD}"					\
+	&& cmake	"${BLENDER_SVN_SOURCE}"				\
+			"-DCMAKE_INSTALL_PREFIX=/opt/blender/svn"	\
+			"-DWITH_INSTALL_PORTABLE=OFF"			\
+			"-DWITH_PYTHON=${PYTHON_ROOT_DIR}"		\
+			"-DWITH_CYCLES=OFF"				\
+	&& make ${PM}							\
+	&& make install
+
 }
 
 case $1 in
