@@ -16,7 +16,8 @@ action_update() {
 		svn update
 	fi
 	LANG="C"
-	CPUCOUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
+	#CPUCOUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
+	CPUCOUNT=$(($(nproc) + 1))
 	if [ -n "$CPUCOUNT" -a "$CPUCOUNT" > "1" ]
 	then
 		PM="-j${CPUCOUNT}"
@@ -27,6 +28,7 @@ action_update() {
 	#PYTHON_INCLUDE_DIR="${PYTHON_ROOT_DIR}/include"
 	#PYTHON_LIBRARY="${PYTHON_ROOT_DIR}/lib/python3.3"
 	#PYTHON_INCLUDE_DIR="${PYTHON_ROOT_DIR}/include/python3.3m"
+	BF_PYTHON_ABI_FLAGS_SUFFIX="m"
 	PATH="${PYTHON_ROOT_DIR}/bin:${PATH}"
 	if [ -d "${BLENDER_SVN_BUILD}" ] ; then
 		rm -rf "${BLENDER_SVN_BUILD}"
@@ -36,11 +38,10 @@ action_update() {
 	&& cmake	"${BLENDER_SVN_SOURCE}"				\
 			"-DCMAKE_INSTALL_PREFIX=/opt/blender/svn"	\
 			"-DWITH_INSTALL_PORTABLE=OFF"			\
-			"-DWITH_PYTHON=${PYTHON_ROOT_DIR}"		\
-			"-DWITH_CYCLES=OFF"				\
 	&& make ${PM}							\
 	&& make install
-
+	#		"-DWITH_PYTHON=${PYTHON_ROOT_DIR}"
+	#		"-DWITH_CYCLES=OFF"
 }
 
 case $1 in
