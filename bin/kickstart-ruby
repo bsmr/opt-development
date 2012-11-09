@@ -73,16 +73,22 @@ tar xvf "${KSR_ARCS}/${RT}"
 mkdir "${RB}"
 cd "${RB}"
 
-NUM_CPUS=$(cat /proc/cpuinfo | grep processor | wc -l)
 MO=""
-if [ "$?" = "0" ]
+NUM_CPUS=$(nproc)
+if [ "$?" = "0" -a "$NUM_CPUS" > "1" ]
 then
-	MO="-j${NUM_CPUS}"
+	MC=$((NUM_CPUS+1))
+	MO="-j${MC}"
 fi
 
 LANG=C
 
-"../${RN}/configure" --enable-shared --prefix="${RD}"	\
+"../${RN}/configure"					\
+		--prefix="${RD}"			\
+		--enable-shared				\
+		--enable-rpath				\
+		CFLAGS="-fPIC" CXXFLAGS="-fPIC"		\
+		LDFLAGS="-Wl,--rpath,${RD}/lib"		\
 	&& make "${MO}" all				\
 	&& make test					\
 	&& make install					\
@@ -120,7 +126,24 @@ KSREOF
 	exit 1
 fi
 
-KSR_ARCS="$HOME/arcs/ruby-lang.org"
+KSR_ARCS=""
+for DD in "Downloads" "arcs"
+do
+	if [ ! -d "${HOME}/${DD}" ] ; then continue ; fi
+	
+	KSR_ARCS="$HOME/${DD}/ruby-lang.org"
+	break
+done
+
+if [ -z "${KSR_ARCS}" ]
+then
+	cat <<KSREOF
+Error: can't find download directory!
+KSREOF
+	exit 2
+fi
+
+#KSR_ARCS="$HOME/arcs/ruby-lang.org"
 RN="ruby-${RV}-p${RP}"
 RT="${RN}.tar.bz2"
 RS="${RN}"
