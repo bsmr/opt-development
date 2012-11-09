@@ -74,22 +74,30 @@ mkdir "${RB}"
 cd "${RB}"
 
 MO=""
-NUM_CPUS=$(nproc)
+#NUM_CPUS=$(nproc)
+NUM_CPUS=$(cat /proc/cpuinfo | grep processor | wc -l)
 if [ "$?" = "0" -a "$NUM_CPUS" > "1" ]
 then
 	MC=$((NUM_CPUS+1))
 	MO="-j${MC}"
 fi
 
-LANG=C
+#cat <<KSREOF
+#***********************************************************************
+#* RN : ${RN}
+#* RD : ${RD}
+#* MO : ${MO}
+#***********************************************************************
+#KSREOF
 
+LANG=C
 "../${RN}/configure"					\
 		--prefix="${RD}"			\
 		--enable-shared				\
 		--enable-rpath				\
 		CFLAGS="-fPIC" CXXFLAGS="-fPIC"		\
 		LDFLAGS="-Wl,--rpath,${RD}/lib"		\
-	&& make "${MO}" all				\
+	&& make ${MO} all				\
 	&& make test					\
 	&& make install					\
 	&& cat <<KSREOF
@@ -100,8 +108,18 @@ export PATH MANPATH
 ***********************************************************************
 KSREOF
 
-cd "/tmp"
-rm -rf "${KSR_TEMP}"
+if [ "$?" = "0" ]
+then
+	cd "/tmp"
+	rm -rf "${KSR_TEMP}"
+else
+	cat <<KSREOF
+*** WARNING ***********************************************************
+* temporary directory was not deleted!
+* ==> "${KSR_TEMP}" (without the quotes)
+***********************************************************************
+KSREOF
+fi
 }
 
 action_setup() {
@@ -143,7 +161,6 @@ KSREOF
 	exit 2
 fi
 
-#KSR_ARCS="$HOME/arcs/ruby-lang.org"
 RN="ruby-${RV}-p${RP}"
 RT="${RN}.tar.bz2"
 RS="${RN}"
