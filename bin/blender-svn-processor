@@ -24,12 +24,13 @@ action_update() {
 	fi
 	#PATH="/opt/python/active/bin:$PATH"
 	PYTHON_ROOT_DIR="/opt/python/3.3.0"
-	#PYTHON_LIBRARY="${PYTHON_ROOT_DIR}/lib"
-	#PYTHON_INCLUDE_DIR="${PYTHON_ROOT_DIR}/include"
-	#PYTHON_LIBRARY="${PYTHON_ROOT_DIR}/lib/python3.3"
-	#PYTHON_INCLUDE_DIR="${PYTHON_ROOT_DIR}/include/python3.3m"
-	BF_PYTHON_ABI_FLAGS_SUFFIX="m"
+	PYTHON_LIBRARY="${PYTHON_ROOT_DIR}/lib/python3.3"
+	PYTHON_LIBPATH="${PYTHON_ROOT_DIR}/lib/python3.3"
+	PYTHON_INCLUDE_DIR="${PYTHON_ROOT_DIR}/include/python3.3m"
+	PYTHON_INCLUDE_CONFIG_DIR="${PYTHON_ROOT_DIR}/include/python3.3m"
+export PYTHON_ROOT_DIR PYTHON_LIBRARY PYTHON_LIBPATH PYTHON_INCLUDE_DIR PYTHON_INCLUDE_CONFIG_DIR
 	PATH="${PYTHON_ROOT_DIR}/bin:${PATH}"
+export PATH
 	if [ -d "${BLENDER_SVN_BUILD}" ] ; then
 		rm -rf "${BLENDER_SVN_BUILD}"
 	fi
@@ -38,10 +39,10 @@ action_update() {
 	&& cmake	"${BLENDER_SVN_SOURCE}"				\
 			"-DCMAKE_INSTALL_PREFIX=/opt/blender/svn"	\
 			"-DWITH_INSTALL_PORTABLE=OFF"			\
+			"-DWITH_CYCLES=OFF"				\
 	&& make ${PM}							\
 	&& make install
 	#		"-DWITH_PYTHON=${PYTHON_ROOT_DIR}"
-	#		"-DWITH_CYCLES=OFF"
 }
 
 case $1 in
