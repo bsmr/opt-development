@@ -17,7 +17,8 @@ action_update() {
 	fi
 	LANG="C"
 	#CPUCOUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
-	CPUCOUNT=$(($(nproc) + 1))
+	#CPUCOUNT=$(($(nproc) + 1))
+	CPUCOUNT=""
 	if [ -n "$CPUCOUNT" -a "$CPUCOUNT" > "1" ]
 	then
 		PM="-j${CPUCOUNT}"
@@ -31,6 +32,10 @@ action_update() {
 export PYTHON_ROOT_DIR PYTHON_LIBRARY PYTHON_LIBPATH PYTHON_INCLUDE_DIR PYTHON_INCLUDE_CONFIG_DIR
 	PATH="${PYTHON_ROOT_DIR}/bin:${PATH}"
 export PATH
+	BOOST_ROOT="/opt/boost/1.52.0"
+	#BOOST_INC_DIR="${BOOST_ROOT}/include/boost"
+	BOOST_INC_DIR="${BOOST_ROOT}/include"
+	BOOST_LIB_DIR="${BOOST_ROOT}/lib"
 	if [ -d "${BLENDER_SVN_BUILD}" ] ; then
 		rm -rf "${BLENDER_SVN_BUILD}"
 	fi
@@ -40,6 +45,10 @@ export PATH
 			"-DCMAKE_INSTALL_PREFIX=/opt/blender/svn"	\
 			"-DWITH_INSTALL_PORTABLE=OFF"			\
 			"-DWITH_CYCLES=OFF"				\
+			"-DBOOST_ROOT=/opt/boost/1.52.0"		\
+			"-DBOOST_CUSTOM=1"				\
+			"-DBoost_INCLUDE_DIRS=${BOOST_INC_DIR}"		\
+			"-DBoost_LIBRARY_DIRS=${BOOST_LIB_DIR}"		\
 	&& make ${PM}							\
 	&& make install
 	#		"-DWITH_PYTHON=${PYTHON_ROOT_DIR}"
