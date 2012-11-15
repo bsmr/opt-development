@@ -17,8 +17,8 @@ action_update() {
 	fi
 	LANG="C"
 	#CPUCOUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
-	#CPUCOUNT=$(($(nproc) + 1))
-	CPUCOUNT=""
+	CPUCOUNT=$(($(nproc) + 1))
+	#CPUCOUNT=""
 	if [ -n "$CPUCOUNT" -a "$CPUCOUNT" > "1" ]
 	then
 		PM="-j${CPUCOUNT}"
@@ -36,6 +36,8 @@ export PATH
 	#BOOST_INC_DIR="${BOOST_ROOT}/include/boost"
 	BOOST_INC_DIR="${BOOST_ROOT}/include"
 	BOOST_LIB_DIR="${BOOST_ROOT}/lib"
+	BOOST_LIBS="${BOOST_LIB_DIR}/libboost_locale.a;${BOOST_LIB_DIR}/libboost_date_time.a;${BOOST_LIB_DIR}/libboost_filesystem.a;${BOOST_LIB_DIR}/libboost_thread.a;${BOOST_LIB_DIR}/libboost_regex.a;${BOOST_LIB_DIR}/libboost_system.a"
+
 	if [ -d "${BLENDER_SVN_BUILD}" ] ; then
 		rm -rf "${BLENDER_SVN_BUILD}"
 	fi
@@ -49,6 +51,7 @@ export PATH
 			"-DBOOST_CUSTOM=1"				\
 			"-DBoost_INCLUDE_DIRS=${BOOST_INC_DIR}"		\
 			"-DBoost_LIBRARY_DIRS=${BOOST_LIB_DIR}"		\
+			"-DBoost_LIBRARIES=${BOOST_LIBS}"		\
 	&& make ${PM}							\
 	&& make install
 	#		"-DWITH_PYTHON=${PYTHON_ROOT_DIR}"
