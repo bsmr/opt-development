@@ -1,6 +1,8 @@
 #!/bin/bash
 
 BN=$(basename $0)
+RMVM="1.9.3"
+RMVR="327"
 
 action_usage() {
 cat <<XEOF
@@ -21,7 +23,7 @@ cat <<XEOF
 
 	For example:
 
-		> ${BN} setup 1.9.3 286
+		> ${BN} setup ${RMVM} ${RMVR}
 
 	-------------------------------------------------------
 XEOF
@@ -130,7 +132,7 @@ if [ -z "${RV}" ]
 then
 	cat <<KSREOF
 Error: no ruby version specified!
-       use something like "1.9.3" (without the quotes)
+       use something like "${RMVM}" (without the quotes)
 KSREOF
 	exit 1
 fi
@@ -139,7 +141,7 @@ if [ -z "${RP}" ]
 then
 	cat <<KSREOF
 Error: no ruby patchlevel specified!
-       use something like "286" (without the quotes)
+       use something like "${RMVR}" (without the quotes)
 KSREOF
 	exit 1
 fi
