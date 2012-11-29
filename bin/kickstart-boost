@@ -1,0 +1,53 @@
+#!/bin/bash
+
+action_usage() {
+BN=$(basename $0)
+cat <<MYXEOF
+usage: ${BN} [ compile | help ]
+MYXEOF
+}
+
+action_help() {
+action_usage
+cat <<MYXEOF
+TBD
+MYXEOF
+}
+
+action_compile() {
+MY_BOOST_BASE="/opt/boost"
+MY_BOOST_ROOT="${MY_BOOST_BASE}/1.52.0"
+MY_BOOST_SRCD="${MY_BOOST_BASE}/src/1.52.0"
+cd "${MY_BOOST_SRCD}"
+export LANG="C"
+#export CFLAGS="-fPIC"
+#export CXXFLAGS="-fPIC"
+#export LDFLAGS="-Wl,--rpath,${MY_BOOST_ROOT}/lib"
+MY_PYTHON_ROOT="/opt/python/3.3.0"
+MY_PYTHON_BINF="${MY_PYTHON_ROOT}/bin/python3"
+#MY_PYTHON_BINF="${MY_PYTHON_ROOT}/bin/python3.3"
+# --with-python-root="${MY_PYTHON_ROOT}"
+#./bootstrap.sh --prefix="${MY_BOOST_ROOT}" --with-python="${MY_PYTHON_BINF}"
+./bootstrap.sh --prefix="${MY_BOOST_ROOT}" CFLAGS="-fPIC" CXXFLAGS="-fPIC" LDFLAGS="-Wl,--rpath,${MY_BOOST_ROOT}/lib"
+./b2 -j9 --clean
+./b2 -j9 -a install
+}
+
+case $1 in
+c|compile)
+	action_compile
+;;
+h|help)
+	action_help
+;;
+*)
+	action_usage
+	exit 1
+;;
+esac
+
+exit 0
+
+#
+# End Of File
+#

@@ -29,6 +29,24 @@ cat <<XEOF
 XEOF
 }
 
+action_find_versions() {
+echo TBD
+#a.b
+#curl --silent ftp://ftp.ruby-lang.org/pub/ruby/ | grep '^d' | awk '{ print $9 }'
+
+#curl --silent ftp://ftp.ruby-lang.org/pub/ruby/1.9/ | awk -F'ruby-' '{ print $2 }' | grep '\.tar\.bz2' | sed -e 's/\.tar\.bz2//g'
+
+#a.b.c
+#curl --silent --list-only 'ftp://ftp.ruby-lang.org/pub/ruby/1.9/' | grep 'ruby-' | grep '.tar.bz2' | sed -e 's/ruby-//g' -e 's/.tar.bz2//g' | awk -F- '{ print $1 }' | sort | uniq
+
+
+# patchlevel
+#curl --silent --list-only 'ftp://ftp.ruby-lang.org/pub/ruby/1.9/' | grep 'ruby-1.9.3-' | grep '.tar.bz2' | sed -e 's/ruby-1.9.3-//g' -e 's/.tar.bz2//g'
+
+# single shot
+#curl --silent --list-only 'ftp://ftp.ruby-lang.org/pub/ruby/' | grep 'ruby-' | grep '.tar.bz2' | sed -e 's/ruby-//g' -e 's/.tar.bz2//g' | grep -e '-p' | awk -F'-p' '{ printf "%s:%s\n",$1,$2 }'
+}
+
 action_prerequisites() {
 sudo apt-get update
 sudo apt-get update
