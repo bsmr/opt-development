@@ -1,0 +1,53 @@
+#!/bin/bash
+
+BN=$(basename $0)
+
+action_usage() {
+cat <<EOF
+usage: ${BN}
+EOF
+}
+
+action_help() {
+action_usage
+cat <<EOF
+EOF
+}
+
+action_setup() {
+NV="0.8.15"
+NB="/opt/node"
+NP="${NB}/${NV}"
+NL="${NP}/lib"
+
+NSRC="/home/family/bsmr/source/system/ecmascript/node-v0.8.15"
+
+CFLAGS="-fPIC"
+CXXFLAGS="-fPIC"
+LDFLAGS="-Wl,--rpath,${NL}"
+
+export CFLAGS CXXFLAGS LDFLAGS
+
+cd "${NSRC}"
+#./configure --prefix="${NP}" --shared-v8 --shared-openssl --shared-zlib --gdb
+./configure --prefix="${NP}" --gdb
+make -j9
+make install
+}
+
+case $1 in
+setup)
+	action_setup
+;;
+help)
+	action_help
+;;
+*)
+	action_usage
+	exit 1
+;;
+esac
+
+exit 0
+
+# EOF
