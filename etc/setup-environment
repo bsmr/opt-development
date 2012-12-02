@@ -49,6 +49,7 @@ for X in						\
 		"/opt/prolog/gnu"			\
 		"/opt/swig"				\
 		"/opt/emacs"				\
+		"/opt/jetbrains/RubyMine"		\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
