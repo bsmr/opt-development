@@ -50,6 +50,7 @@ for X in						\
 		"/opt/swig"				\
 		"/opt/emacs"				\
 		"/opt/jetbrains/RubyMine"		\
+		"/opt/codeblocks"			\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
