@@ -41,6 +41,7 @@ for X in						\
 		"-/opt/racket"				\
 		"-/opt/lua"				\
 		"/opt/qt"				\
+		"/opt/qt/creator"			\
 		"-/opt/wx"				\
 		"/opt/scheme/gambit"			\
 		"/opt/scheme/mit"			\
