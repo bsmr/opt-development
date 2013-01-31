@@ -2,12 +2,16 @@
 # $HOME/.bash_aliases
 #
 
-alias development-environment='. /opt/development/etc/setup-environment'
+SFILE="/opt/development/etc/setup-environment"
+if [ -f "${SFILE}" ]
+then
+	alias development-environment='. '${SFILE}''
+fi
 
 alias emacs-cleanup-files='find . -name '"'"'*~'"'"' -execdir rm -v '"'"'{}'"'"' \;'
 alias emacs-edit-clj='emacs `find . -type f -name '"'"'*.clj'"'"'`'
 
-alias camera-support='$HOME/bin/camera-support'
+#alias camera-support='$HOME/bin/camera-support'
 
 #
 # End Of File

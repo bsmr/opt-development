@@ -6,7 +6,8 @@ then
 	if [ -f "${BASHALIAS}" ] ; then
 		rm -f "${BASHALIAS}"
 	fi
-	ln -sf "/opt/development/etc/dot_bash_aliases" "${BASHALIAS}"
+	#ln -sf "/opt/development/etc/dot_bash_aliases" "${BASHALIAS}"
+	cp "/opt/development/etc/dot_bash_aliases" "${BASHALIAS}"
 else
 	echo "Nothing was changed!"
 fi

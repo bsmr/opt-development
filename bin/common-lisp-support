@@ -292,8 +292,8 @@ action_usage() {
 BN=$(basename $0)
 cat <<EOF
 usage: ${BN} [ACTION]
-	ACTION: sbcl-download   | sbcl-src-install | sbcl-git-install |
-                sbcl-slime-core | setup-quicklisp  | help
+	ACTION: sbcl-download RELEASE | sbcl-src-install RELEASE | sbcl-git-install |
+                sbcl-slime-core       | setup-quicklisp          | help
 EOF
 }
 
