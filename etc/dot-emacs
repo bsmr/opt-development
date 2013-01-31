@@ -3,62 +3,86 @@
 ;;;
 
 ;;;; for user e-mail address
-(setq user-mail-address "boris.muehmer@googlemail.com")
+(setq user-mail-address "YOUR@EMAIL.ADDRESS")
 
 ; add emacs setting
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(cua-mode t nil (cua-base))
+ '(current-language-environment "UTF-8")
  '(inhibit-startup-screen t)
  '(scroll-bar-mode (quote right))
  '(size-indication-mode t))
     
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 ;;; === add erlang stuff: start ========================================
 (setq erlang-root-base "/opt/erlang/otp/active/lib/erlang")
 ;;; no more changes
-(defun path-concat (path1 path2)
-  (concat (file-name-as-directory path1) path2))
-(setq erlang-libs-base
-      (path-concat erlang-root-base "lib"))
-(setq erlang-tools-base
-      (nth 0 (directory-files erlang-libs-base :true "^tools-*")))
-(setq erlang-tools-emacs-base
-      (path-concat erlang-tools-base "emacs"))
-(setq erlang-bin-dir
-      (path-concat erlang-tools-base "bin"))
-(if (file-directory-p erlang-tools-emacs-base)
+(if (file-directory-p erlang-root-base)
     (progn
-      (add-to-list 'load-path erlang-tools-emacs-base)
-      (require 'erlang-start)
-      (require 'erlang-flymake)))
-(if (file-directory-p erlang-bin-dir)
-    (add-to-list 'exec-path erlang-bin-dir))
+      (defun path-concat (path1 path2)
+	(concat (file-name-as-directory path1) path2))
+      (setq erlang-libs-base
+	    (path-concat erlang-root-base "lib"))
+      (setq erlang-tools-base
+	    (nth 0 (directory-files erlang-libs-base :true "^tools-*")))
+      (setq erlang-tools-emacs-base
+	    (path-concat erlang-tools-base "emacs"))
+      (setq erlang-bin-dir
+	    (path-concat erlang-tools-base "bin"))
+      (if (file-directory-p erlang-tools-emacs-base)
+	  (progn
+	    (add-to-list 'load-path erlang-tools-emacs-base)
+	    (require 'erlang-start)
+	    (require 'erlang-flymake)))
+      (if (file-directory-p erlang-bin-dir)
+	  (add-to-list 'exec-path erlang-bin-dir))))
 ;;; === add erlang stuff: end ==========================================
 
 ;;; === add lisp/slime stuff: start ====================================
+(setq slime-net-coding-system 'utf-8-unix)
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq slime-lisp-implementations
-        '((sbcl ("/opt/lisp/sbcl/active/bin/sbcl" "--core" "/opt/lisp/sbcl/slime/core-for-slime") :coding-system utf-8-unix)))
-(setq inferior-lisp-program "/opt/lisp/sbcl/active/bin/sbcl") ; your Lisp system
+	'((sbcl ("/opt/lisp/sbcl/active/bin/sbcl"
+		 "--core" "/opt/lisp/sbcl/slime/core-for-slime"
+		 "--noinform" "--no-linedit") :coding-system utf-8-unix)))
+;(setq inferior-lisp-program "/opt/lisp/sbcl/active/bin/sbcl") ; your Lisp system
+(setq inferior-lisp-program "/opt/lisp/sbcl/active/bin/sbcl --noinform --no-linedit")
 (add-to-list 'load-path "/opt/lisp/slime/") ; your SLIME directory
 ;(require 'slime)
 (require 'slime-autoloads)
 ;(slime-setup)
 ;(slime-setup '(slime-fancy))
-;(slime-setup '(slime-repl))
 (slime-setup '(slime-fancy slime-asdf slime-banner))
+;(slime-setup '(slime-repl))
 ;;; === add lisp/slime stuff: end ======================================
+
+;;; === glsl-mode
+(add-to-list 'load-path "~/.emacs.d/")
+(autoload 'glsl-mode "glsl-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
+
+;;;; add package
+;(add-to-list 'load-path "~/.emacs.d/")
+;(require 'package)
+;(add-to-list 'package-archives
+;             '("marmalade" . "http://marmalade-repo.org/packages/"))
+;(package-initialize)
+
+;;;; add some clojure specific stuff
+;(setq slime-net-coding-system 'utf-8-unix)
 
 ;;;
 ;;; End Of File
