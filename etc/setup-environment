@@ -50,6 +50,7 @@ for X in						\
 		"/opt/prolog/gnu"			\
 		"/opt/swig"				\
 		"/opt/emacs"				\
+		"/opt/vim"				\
 		"/opt/jetbrains/RubyMine"		\
 		"/opt/codeblocks"			\
 		""
