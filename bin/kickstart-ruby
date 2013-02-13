@@ -145,6 +145,7 @@ fi
 action_setup() {
 RV="$1"
 RP="$2"
+SK="$3"
 
 if [ -z "${RV}" ]
 then
@@ -187,7 +188,10 @@ RS="${RN}"
 RB="${RN}-build"
 RD="/opt/ruby/${RV}"
 
-action_prerequisites
+if [ -z "$SK" ]
+then
+	action_prerequisites
+fi
 action_fetch_ruby	"${RV}" "${RP}"
 action_compile_ruby	"${RV}" "${RP}"
 }
@@ -197,7 +201,7 @@ c|check)
 	action_prerequisites
 ;;
 s|setup)
-	action_setup "$2" "$3"
+	action_setup "$2" "$3" "$4"
 ;;
 h|help)
 	action_help
