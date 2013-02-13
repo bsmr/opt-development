@@ -1,0 +1,16 @@
+#!/bin/bash
+
+process_install_vim() {
+test -f Makefile && make distclean
+nice ./configure --prefix=/opt/vim/git --enable-rubyinterp=dynamic --with-features=huge --with-gnome --with-ruby-command=/opt/ruby/active/bin/ruby 2>&1 | tee log-1-configure.txt
+nice make -j9 2>&1 | tee log-2-build.txt 
+nice make install 2>&1 | tee log-3-install.txt 
+}
+
+echo "TBD"
+
+exit 0
+
+#
+# End Of File
+#
