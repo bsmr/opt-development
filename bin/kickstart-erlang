@@ -1,48 +1,95 @@
 #!/bin/bash
+#######################################################################
+#
+# "kickstarting" an Erlang/OTP environment
+#
+#######################################################################
+
+SCRIPT_NAME=$(basename "$0")
+#SCRIPT_PATH=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 action_usage() {
 	cat <<EOF
-usage: $O [setup|help]
+usage: ${SCRIPT_NAME} [ setup RELEASE BUILD | help ]
+EOF
+}
+
+action_help() {
+	cat <<EOF
+--- setup -------------------------------------------------------------
+	\$ ${SCRIPT_NAME} setup RELEASE BUILD
+		RELEASE	: is something like "R13" "R14" "R15" "R16" etc...
+		BUILD	: is something like "A" "B01" "B02" "B03" etc...
 EOF
 }
 
 action_setup() {
-	#TIME="/usr/bin/time"
-	TIME=""
-	# Some personal environmen settings
-	ERLARCS="/public/Software/Downloads/erlang.org"
+	local ERL_RELEASE="$1"
+	local ERL_BUILD="$2"
+	ERLSVER="${1}${2}"
+	if [ -z "${ERLSVER}" ]
+	then
+		echo "Error: no Erlang/OPT version specified!" >&2
+		exit 1
+	else
+		echo "About to build Erlang/OPT ${ERLSVER}..."
+	fi
+	# Some personal environment settings
+	ERLARCS="${HOME}/arcs/erlang.org"
 	ERLSBAS=$(mktemp -d --suffix="-erlang-otp")
-	ERLSVER="R15B03"
 	ERLSNAM="otp_src_${ERLSVER}"
 	ERLSTAR="${ERLSNAM}.tar.gz"
+	ERLSTPN="${ERLARCS}/${ERLSTAR}"
 	BUILDTS=$(date --utc '+%Y%m%d-%H%M')
 	OPTERL="/opt/erlang/otp"
-	PREFIX="${OPTERL}/${ERLSVER}/${BUILDTS}"
+	#PREFIX="${OPTERL}/${ERLSVER}/${BUILDTS}"
+	PREFIX="${OPTERL}/${ERL_RELEASE}/${ERL_BUILD}"
 	ERLLINK="${OPTERL}/active"
 	TITLE="+++ ACTION:"
 
 	# Setup the source environment
-	echo "${TITLE} extracking source"
+	if [ ! -f "${ERLSTPN}" ]
+	then
+		echo "Error: can't access Erlang/OTP source archive: ${ERLSTPN}!" >&2
+		exit 1
+	fi
+
+	echo "${TITLE} extracting Erlang/OTP sources"
 	test ! -d "${ERLSBAS}" && mkdir -p "${ERLSBAS}"
 	cd "${ERLSBAS}"
-	tar xf "${ERLARCS}/${ERLSTAR}"
+	tar xf "${ERLSTPN}"
 	cd "${ERLSNAM}"
 
-	# Some needed enviroment settings
-	echo "${TITLE} setting environment"
-	export ERL_TOP=$(pwd)
-	export PATH="$ERL_TOP/bin:$PATH"
-	export LANG="C"
+	# Setting up enviroment variables
+	echo "${TITLE} setting up environment"
+	ERL_TOP=$(pwd)
+	PATH="${PREFIX}/bin:${ERL_TOP}/bin:${PATH}"
+	LANG="C"
 
 	# Configure
 	echo "${TITLE} configure"
-	${TIME} ./configure --prefix="${PREFIX}" --with-gmp
-
-	# Compile and install
+	#./configure --prefix="${PREFIX}" --with-gmp
+	"./otp_build" save_bootstrap
+	"./otp_build" autoconf
+	"./otp_build" configure --prefix="${PREFIX}" --with-gmp
+	# simple build
+	for ACT in "all" "install"
+	do
+		echo "${TITLE} make ${ACT}"
+		make ${ACT}
+	done
+	#
+	make clean
+	#
+	hash -r
+	"./otp_build" remove_prebuilt_files
+	"./otp_build" autoconf
+	"./otp_build" configure --prefix="${PREFIX}" --with-gmp
+	# full build
 	for ACT in "all" "install" "docs" "install-docs"
 	do
 		echo "${TITLE} make ${ACT}"
-		${TIME} make ${ACT}
+		make ${ACT}
 	done
 
 	# Create a directory with shortcuts to all PDFs
@@ -69,10 +116,12 @@ action_setup() {
 
 case $1 in
 	setup)
-		action_setup
+		shift
+		action_setup $*
 		;;
 	help)
 		action_usage
+		action_help
 		;;
 	*)
 		action_usage
@@ -82,4 +131,8 @@ esac
 
 exit 0
 
-# EOF
+#######################################################################
+#
+# End Of File
+#
+#######################################################################
