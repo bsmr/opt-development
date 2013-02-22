@@ -166,7 +166,7 @@ KSREOF
 fi
 
 KSR_ARCS=""
-for DD in "Downloads" "arcs"
+for DD in "arcs" "Downloads"
 do
 	if [ ! -d "${HOME}/${DD}" ] ; then continue ; fi
 	
