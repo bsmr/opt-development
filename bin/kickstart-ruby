@@ -2,7 +2,7 @@
 
 BN=$(basename $0)
 RMVM="1.9.3"
-RMVR="p374"
+RMVR="p392"
 
 action_usage() {
 cat <<XEOF
