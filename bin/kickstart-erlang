@@ -10,22 +10,24 @@ SCRIPT_NAME=$(basename "$0")
 
 action_usage() {
 	cat <<EOF
-usage: ${SCRIPT_NAME} [ setup RELEASE BUILD | help ]
+usage: ${SCRIPT_NAME} [ setup RELEASE BUILD [PATCH] | help ]
 EOF
 }
 
 action_help() {
 	cat <<EOF
 --- setup -------------------------------------------------------------
-	\$ ${SCRIPT_NAME} setup RELEASE BUILD
+	\$ ${SCRIPT_NAME} setup RELEASE BUILD [PATCH]
 		RELEASE	: is something like "R13" "R14" "R15" "R16" etc...
 		BUILD	: is something like "A" "B01" "B02" "B03" etc...
+		PATCH	: may be something like "1" "2" (optional!)
 EOF
 }
 
 action_setup() {
 	local ERL_RELEASE="$1"
 	local ERL_BUILD="$2"
+	local ERL_PATCH="$3"
 	ERLSVER="${1}${2}"
 	if [ -z "${ERLSVER}" ]
 	then
@@ -38,7 +40,12 @@ action_setup() {
 	ERLARCS="${HOME}/arcs/erlang.org"
 	ERLSBAS=$(mktemp -d --suffix="-erlang-otp")
 	ERLSNAM="otp_src_${ERLSVER}"
-	ERLSTAR="${ERLSNAM}.tar.gz"
+	if [ -z "${ERL_PATCH}" ]
+	then
+		ERLSTAR="otp_src_${ERLSVER}.tar.gz"
+	else
+		ERLSTAR="otp_src_${ERLSVER}-${ERL_PATCH}.tar.gz"
+	fi
 	ERLSTPN="${ERLARCS}/${ERLSTAR}"
 	BUILDTS=$(date --utc '+%Y%m%d-%H%M')
 	OPTERL="/opt/erlang/otp"
