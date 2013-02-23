@@ -2,21 +2,31 @@
 #######################################################################
 #
 # "kickstarting" an Erlang/OTP environment
+#  - build-support
+#  - kickstart-erlang
 #
 #######################################################################
 
 SCRIPT_NAME=$(basename "$0")
 #SCRIPT_PATH=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
+TITLE="+++ ACTION:"
+OPTERL="/opt/erlang/otp"
+ERLLINK="${OPTERL}/active"
+
+
 action_usage() {
 	cat <<EOF
-usage: ${SCRIPT_NAME} [ setup RELEASE BUILD [PATCH] | help ]
+usage: ${SCRIPT_NAME} [ git | setup RELEASE BUILD [PATCH] | help ]
 EOF
 }
 
 action_help() {
 	cat <<EOF
+--- git ---------------------------------------------------------------
+Builds Erlang/OTP from a git repository.
 --- setup -------------------------------------------------------------
+Builds Erlang/OTP from an archive:
 	\$ ${SCRIPT_NAME} setup RELEASE BUILD [PATCH]
 		RELEASE	: is something like "R13" "R14" "R15" "R16" etc...
 		BUILD	: is something like "A" "B01" "B02" "B03" etc...
@@ -24,58 +34,18 @@ action_help() {
 EOF
 }
 
-action_setup() {
-	local ERL_RELEASE="$1"
-	local ERL_BUILD="$2"
-	local ERL_PATCH="$3"
-	ERLSVER="${1}${2}"
-	if [ -z "${ERLSVER}" ]
-	then
-		echo "Error: no Erlang/OPT version specified!" >&2
-		exit 1
-	else
-		echo "About to build Erlang/OPT ${ERLSVER}..."
-	fi
-	# Some personal environment settings
-	ERLARCS="${HOME}/arcs/erlang.org"
-	ERLSBAS=$(mktemp -d --suffix="-erlang-otp")
-	ERLSNAM="otp_src_${ERLSVER}"
-	if [ -z "${ERL_PATCH}" ]
-	then
-		ERLSTAR="otp_src_${ERLSVER}.tar.gz"
-	else
-		ERLSTAR="otp_src_${ERLSVER}-${ERL_PATCH}.tar.gz"
-	fi
-	ERLSTPN="${ERLARCS}/${ERLSTAR}"
-	BUILDTS=$(date --utc '+%Y%m%d-%H%M')
-	OPTERL="/opt/erlang/otp"
-	#PREFIX="${OPTERL}/${ERLSVER}/${BUILDTS}"
-	PREFIX="${OPTERL}/${ERL_RELEASE}/${ERL_BUILD}"
-	ERLLINK="${OPTERL}/active"
-	TITLE="+++ ACTION:"
-
-	# Setup the source environment
-	if [ ! -f "${ERLSTPN}" ]
-	then
-		echo "Error: can't access Erlang/OTP source archive: ${ERLSTPN}!" >&2
-		exit 1
-	fi
-
-	echo "${TITLE} extracting Erlang/OTP sources"
-	test ! -d "${ERLSBAS}" && mkdir -p "${ERLSBAS}"
-	cd "${ERLSBAS}"
-	tar xf "${ERLSTPN}"
-	cd "${ERLSNAM}"
+action_setup_common() {
+	local PREFIX="$1"
 
 	# Setting up enviroment variables
 	echo "${TITLE} setting up environment"
 	ERL_TOP=$(pwd)
 	PATH="${PREFIX}/bin:${ERL_TOP}/bin:${PATH}"
+	hash -r
 	LANG="C"
 
 	# Configure
 	echo "${TITLE} configure"
-	#./configure --prefix="${PREFIX}" --with-gmp
 	"./otp_build" save_bootstrap
 	"./otp_build" autoconf
 	"./otp_build" configure --prefix="${PREFIX}" --with-gmp
@@ -116,15 +86,66 @@ action_setup() {
 		fi
 		ln -sf "${PREFIX}" "${ERLLINK}"
 	fi
+}
+
+action_setup_archive() {
+	local ERL_RELEASE="$1"
+	local ERL_BUILD="$2"
+	local ERL_PATCH="$3"
+	ERLSVER="${1}${2}"
+	if [ -z "${ERLSVER}" ]
+	then
+		echo "Error: no Erlang/OPT version specified!" >&2
+		exit 1
+	else
+		echo "About to build Erlang/OPT ${ERLSVER}..."
+	fi
+	# Some personal environment settings
+	ERLARCS="${HOME}/arcs/erlang.org"
+	ERLSBAS=$(mktemp -d --suffix="-erlang-otp")
+	ERLSNAM="otp_src_${ERLSVER}"
+	if [ -z "${ERL_PATCH}" ]
+	then
+		ERLSTAR="otp_src_${ERLSVER}.tar.gz"
+	else
+		ERLSTAR="otp_src_${ERLSVER}-${ERL_PATCH}.tar.gz"
+	fi
+	ERLSTPN="${ERLARCS}/${ERLSTAR}"
+	PREFIX="${OPTERL}/${ERL_RELEASE}/${ERL_BUILD}"
+
+	# Setup the source environment
+	if [ ! -f "${ERLSTPN}" ]
+	then
+		echo "Error: can't access Erlang/OTP source archive: ${ERLSTPN}!" >&2
+		exit 1
+	fi
+
+	echo "${TITLE} extracting Erlang/OTP sources"
+	test ! -d "${ERLSBAS}" && mkdir -p "${ERLSBAS}"
+	cd "${ERLSBAS}"
+	tar xf "${ERLSTPN}"
+	cd "${ERLSNAM}"
+
+	action_setup_common "${PREFIX}"
 
 	echo "${TITLE} cleanup"
 	rm -rf "${ERLSBAS}"
 }
 
+action_setup_git() {
+	BUILDTS=$(date --utc '+%Y%m%d-%H%M')
+	PREFIX="${OPTERL}/git/${BUILDTS}"
+
+	action_setup_common "${PREFIX}"
+}
+
 case $1 in
+	git)
+		action_setup_git
+		;;
 	setup)
 		shift
-		action_setup $*
+		action_setup_archive $*
 		;;
 	help)
 		action_usage
