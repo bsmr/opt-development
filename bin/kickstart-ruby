@@ -1,8 +1,8 @@
 #!/bin/bash
 
 BN=$(basename $0)
-RMVM="1.9.3"
-RMVR="p392"
+RMVM="2.0.0"
+RMVR="p0"
 
 action_usage() {
 cat <<XEOF
