@@ -76,5 +76,6 @@ for X in						\
 export PATH MANPATH
 
 hash -r
+ulimit -c unlimited
 
 # EOF

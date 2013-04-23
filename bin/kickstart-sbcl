@@ -226,7 +226,7 @@ action_install_emacs() {
 DL="${DLBASE}/gnu.org"
 if [ -z "$1" ]
 then
-	EV="24.2"
+	EV="24.3"
 else
 	EV="$1"
 fi
@@ -251,7 +251,8 @@ tar xf "${DL}/emacs-${EV}.tar.${CC}"
 mkdir "emacs-${EV}-build"
 cd "emacs-${EV}-build"
 export LANG="C"
-../emacs-${EV}/configure --prefix=/opt/emacs/${EV}
+#../emacs-${EV}/configure --prefix=/opt/emacs/${EV}
+../emacs-${EV}/configure --prefix=/opt/emacs/${EV} --with-x-toolkit=no --without-gpm --without-x
 make -j9 all
 make install
 cd ..
