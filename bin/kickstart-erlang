@@ -104,13 +104,25 @@ action_setup_archive() {
 	ERLARCS="${HOME}/arcs/erlang.org"
 	ERLSBAS=$(mktemp -d --suffix="-erlang-otp")
 	ERLSNAM="otp_src_${ERLSVER}"
-	if [ -z "${ERL_PATCH}" ]
+	ERLSTPN=""
+	for ARC in "xz" "bz2" "gz"
+	do
+		if [ -z "${ERL_PATCH}" ]
+		then
+			ERLSTARX="otp_src_${ERLSVER}.tar.${ARC}"
+		else
+			ERLSTARX="otp_src_${ERLSVER}-${ERL_PATCH}.tar.${ARC}"
+		fi
+		ERLSTPNX="${ERLARCS}/${ERLSTARX}"
+		if [ ! -f "${ERLSTPNX}" ] ; then continue; fi
+		ERLSTPN="${ERLSTPNX}"
+		break
+	done
+	if [ -z "${ERLSTPN}" ]
 	then
-		ERLSTAR="otp_src_${ERLSVER}.tar.gz"
-	else
-		ERLSTAR="otp_src_${ERLSVER}-${ERL_PATCH}.tar.gz"
+		echo "Error: can't access source tarball!" >&2
+		exit 1
 	fi
-	ERLSTPN="${ERLARCS}/${ERLSTAR}"
 	PREFIX="${OPTERL}/${ERL_RELEASE}/${ERL_BUILD}"
 
 	# Setup the source environment
