@@ -17,7 +17,7 @@ ERLLINK="${OPTERL}/active"
 
 action_usage() {
 	cat <<EOF
-usage: ${SCRIPT_NAME} [ git | setup RELEASE BUILD [PATCH] | help ]
+usage: ${SCRIPT_NAME} [ git | setup RELEASE BUILD [PATCH] | check-dependencies | help ]
 EOF
 }
 
@@ -151,7 +151,31 @@ action_setup_git() {
 	action_setup_common "${PREFIX}"
 }
 
+action_check_dependencies() {
+sudo apt-get install build-essential m4 libncurses5-dev libssh-dev libgmp-dev libwxgtk2.8-dev libglu1-mesa-dev
+sudo apt-get install libglu1-mesa-dev
+sudo apt-get install ncurses-doc libssh-doc wx2.8-doc libxcb-doc libxext-doc
+sudo apt-get install default-jdk xsltproc fop
+
+sudo apt-get install fop-doc libtool-doc
+
+#sudo apt-get install fop-doc libservlet3.0-java equivs libavalon-framework-java-doc libbonobo2-bin
+#sudo apt-get install bsh libcommons-io-java-doc libcommons-logging-java-doc libexcalibur-logkit-java
+#sudo apt-get install liblog4j1.2-java desktop-base libice-doc libjaxp1.3-java-gcj libjline-java-doc
+#sudo apt-get install libjdom1-java libsaxon-java-doc libsm-doc libxalan2-java-doc libxsltc-java libxerces2-java-doc
+#sudo apt-get install libxerces2-java-gcj libxml-commons-resolver1.1-java-doc libxt-doc
+#sudo apt-get install openjdk-7-demo openjdk-7-source visualvm icedtea-7-plugin
+#sudo apt-get install sun-java6-fonts ttf-telugu-fonts ttf-oriya-fonts ttf-kannada-fonts ttf-bengali-fonts librhino-java-doc
+#sudo apt-get install libtool-doc gfortran fortran95-compiler gcj
+
+sudo apt-get install libxml2-utils
+sudo apt-get install unixodbc-dev
+}
+
 case $1 in
+	check-dependencies)
+		action_check_dependencies
+		;;
 	git)
 		action_setup_git
 		;;
