@@ -1,0 +1,159 @@
+#!/bin/bash
+#######################################################################
+#
+# kickstart-emacs
+#
+# Download, check dependencies and compile(/install) emacs.
+#
+#######################################################################
+
+DLBASE="${HOME}/arcs"
+GNUDLBASE="${DLBASE}/gnu.org"
+
+EMACS_VERSION_DEFAULT="24.3"
+
+action_emacs_check_prerequisites() {
+sudo apt-get install libgtk-3-dev libxaw7-dev libjpeg-dev libgif-dev libtiff4-dev
+sudo apt-get install libotf-dev libm17n-dev libxml2-dev libgpm-dev libdbus-1-dev librsvg2-dev imagemagick libgconf2-dev
+sudo apt-get install libncurses5-dev libgnutls-dev libmagickwand-dev
+}
+
+action_download_emacs() {
+local EMACS_VERSION="$1"
+local DOWNLOADED=""
+if [ -z "${EMACS_VERSION}" ]
+then
+	EMACS_VERSION="${EMACS_VERSION_DEFAULT}"
+fi
+if [ ! -d "${GNUDLBASE}" ] ; then mkdir -p "${GNUDLBASE}" ; fi
+cd "${GNUDLBASE}"
+echo "Trying to fetch an emacs archive for version ${EMACS_VERSION}:"
+if [ "$?" != "0" ]
+then
+	echo "Error: failed to change to download archive folder!" >&2
+	exit 1
+fi
+for ARC in "xz" "bz2" "gz"
+do
+	EMACS_ARCHIVE="emacs-${EMACS_VERSION}.tar.${ARC}"
+	if [ -f "${EMACS_ARCHIVE}" ]
+	then
+		echo "Error: there is an emacs archive named \"${EMACS_ARCHIVE}\"!" >&2
+		exit 1
+	fi
+	RES=$(wget -nc "ftp://ftp.gnu.org/gnu/emacs/${EMACS_ARCHIVE}" 2>&1)
+	if [ "$?" = "0" ]
+	then
+		echo "Downloaded \"${EMACS_ARCHIVE}\"."
+		DOWNLOADED="yes"
+		break
+	else
+		continue
+	fi
+done
+if [ -z "${DOWNLOADED}" ]
+then
+	echo "Error: failed to download any emacs archive!" >&2
+	exit 1
+fi
+}
+
+action_install_emacs() {
+local AEV="$1"
+local AEX="$2"
+if [ -z "${AEV}" ]
+then
+	EV="${EMACS_VERSION_DEFAULT}"
+else
+	EV="$1"
+fi
+DEF_EPATH_X11="/opt/emacs/${EV}-x11"
+DEF_EPATH_NOX="/opt/emacs/${EV}-nox"
+case "${AEX}" in
+	"nox"|"nox11")
+		EOPTS="--with-x-toolkit=no --without-gpm --without-x"
+		EPATH="${DEF_EPATH_NOX}"
+		;;
+	*)
+		# --with-x-toolkit=KIT (KIT one of: yes or gtk, gtk2, gtk3, lucid or athena, motif, no)
+		EOPTS="--with-x-toolkit=gtk3"
+		EPATH="${DEF_EPATH_X11}"
+		;;
+esac
+EARF=""
+for C in "xz" "bz2" "gzip"
+do
+	if [ -z "$C" ] ; then continue ; fi
+	TEARF="${GNUDLBASE}/emacs-${EV}.tar.${C}"
+	if [ ! -f "${TEARF}" ] ; then continue ; fi
+	EARF="${TEARF}"
+done
+if [ -z "${EARF}" ]
+then
+	echo "Error: failed to find emacs archive!" >&2
+	exit 1
+fi
+tar xf "${EARF}"
+mkdir "emacs-${EV}-build"
+cd "emacs-${EV}-build"
+export LANG="C"
+echo "Emacs: configure"
+../emacs-${EV}/configure --prefix="${EPATH}" ${EOPTS}	>"../log-1-configure.txt"	2>&1
+echo "Emacs: build"
+make -j9 all						>"../log-2-build.txt"		2>&1
+echo "Emacs: install"
+make install						>"../log-3-install.txt"		2>&1
+echo "Emace: cleanup"
+cd ..
+rm -rf "emacs-${EV}" "emacs-${EV}-build"
+echo "*** => ln -sf \"${EPATH}\" \"/opt/emacs/active\""
+}
+
+action_usage() {
+BN=$(basename $0)
+cat <<EOF
+usage: ${BN} [ download | check-deps | compile | help ]
+EOF
+}
+
+action_help() {
+	action_usage
+cat <<EOF
+	download   : download emacs archive
+	check-deps : check emacs dependencies
+	compile    : setup/install emacs
+	help       : this help text
+EOF
+}
+
+# === main entry point ================================================
+
+case $1 in
+download)
+	shift
+	action_download_emacs $*
+;;
+check-deps)
+	shift
+	action_emacs_check_prerequisites $*
+;;
+compile)
+	shift
+	action_install_emacs $*
+;;
+help|-h|--help|?)
+	action_help
+;;
+*)
+	action_usage
+	exit 1
+;;
+esac
+
+exit 0
+
+#######################################################################
+#
+# End Of File
+#
+#######################################################################
