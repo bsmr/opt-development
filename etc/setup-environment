@@ -24,6 +24,7 @@ for X in						\
 		"/opt/ruby"				\
 		"-/opt/rubymine"			\
 		"/opt/python"				\
+		"/opt/perl"				\
 		"/opt/java/jdk"				\
 		"/opt/java/apache/ant"			\
 		"/opt/java/apache/maven"		\
