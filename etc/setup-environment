@@ -14,6 +14,7 @@ for X in						\
 		"/opt/cmake"				\
 		"/opt/erlang/otp"			\
 		"/opt/erlang/rebar"			\
+		"/opt/erlang/yaws"			\
 		"/opt/lisp/sbcl"			\
 		"/opt/lisp/clisp"			\
 		"/opt/lisp/ecl"				\
