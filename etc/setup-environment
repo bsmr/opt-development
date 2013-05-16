@@ -36,6 +36,7 @@ for X in						\
 		"/opt/android/sdk/tools"		\
 		"/opt/android/sdk/platform-tools"	\
 		"/opt/android/ndk"			\
+		"/opt/android/studio"			\
 		"-/opt/eclipse"				\
 		"/opt/java/eclipse"			\
 		"/opt/node"				\
