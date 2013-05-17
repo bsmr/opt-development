@@ -54,7 +54,8 @@ for X in						\
 		"/opt/swig"				\
 		"/opt/emacs"				\
 		"/opt/vim"				\
-		"/opt/jetbrains/RubyMine"		\
+		"/opt/jetbrains/idea"			\
+		"/opt/jetbrains/rubymine"		\
 		"/opt/codeblocks"			\
 		""
 	do
