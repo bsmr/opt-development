@@ -39,6 +39,7 @@ for X in						\
 		"/opt/android/studio"			\
 		"-/opt/eclipse"				\
 		"/opt/java/eclipse"			\
+		"/opt/java/netbeans"			\
 		"/opt/node"				\
 		"-/opt/gambc/current"			\
 		"-/opt/racket"				\
