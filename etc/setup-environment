@@ -53,6 +53,7 @@ for X in						\
 		"/opt/prolog/gnu"			\
 		"/opt/swig"				\
 		"/opt/emacs"				\
+		"/opt/xemacs"				\
 		"/opt/vim"				\
 		"/opt/jetbrains/idea"			\
 		"/opt/jetbrains/rubymine"		\
