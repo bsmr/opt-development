@@ -82,6 +82,11 @@ for X in						\
 
 export PATH MANPATH
 
+if [ -x "/opt/jetbrains/rubymine/active/bin/rubymine.sh" ]
+then
+	alias rubymine='/opt/jetbrains/rubymine/active/bin/rubymine.sh'
+fi
+
 hash -r
 ulimit -c unlimited
 
