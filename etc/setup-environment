@@ -85,6 +85,7 @@ export PATH MANPATH
 if [ -x "/opt/jetbrains/rubymine/active/bin/rubymine.sh" ]
 then
 	alias rubymine='/opt/jetbrains/rubymine/active/bin/rubymine.sh'
+	alias bgrm='rubymine </dev/null >/dev/null 2>&1'
 fi
 
 hash -r
