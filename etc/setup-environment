@@ -59,6 +59,7 @@ for X in						\
 		"/opt/jetbrains/rubymine"		\
 		"/opt/jetbrains/phpstorm"		\
 		"/opt/jetbrains/webstorm"		\
+		"/opt/jetbrains/pycharm"		\
 		"/opt/codeblocks"			\
 		""
 	do
