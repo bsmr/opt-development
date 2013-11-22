@@ -2,7 +2,7 @@
 
 BN=$(basename $0)
 RMVM="2.0.0"
-RMVR="p195"
+RMVR="p353"
 
 action_usage() {
 cat <<XEOF
@@ -183,7 +183,8 @@ KSREOF
 fi
 
 RN="ruby-${RV}-${RP}"
-RT="${RN}.tar.bz2"
+#RT="${RN}.tar.bz2"
+RT="${RN}.tar.xz"
 RS="${RN}"
 RB="${RN}-build"
 RD="/opt/ruby/${RV}"
