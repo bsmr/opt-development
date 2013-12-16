@@ -1,0 +1,114 @@
+#!/bin/bash
+
+SCRIPT_NAME=$(basename $0)
+SCRIPT_PATH=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+MYGITREPOS="${HOME}/.mygitrepositorylist"
+
+# --- display usage information ---------------------------------------
+action_usage() {
+cat <<EOF
+usage: ${SCRIPT_NAME} [ update | help ]
+EOF
+}
+
+# --- display extended usage information ------------------------------
+action_help() {
+cat <<EOF
+To be done...
+EOF
+}
+
+# --- check my git repositories for updates from upstream
+process_repro_update() {
+local REPO="$1"
+
+echo "********************************************************"
+echo "*** $REPO"
+echo "*** ----------------------------------------------------"
+
+cd "${REPO}"
+
+local BRANCH=$(git branch -a | grep '^*' | awk '{ print $2 }')
+local RU=$(git remote | grep '^upstream')
+local RO=$(git remote | grep '^origin')
+
+if [ -z "${BRANCH}" ]
+then
+	echo "Error: failed to get current branch!" >&2
+	exit 1
+fi
+if [ -z "${RU}" ]
+then
+	echo "Error: no remote \"upstream\"!" >&2
+	exit 1
+fi
+if [ -z "${RO}" ]
+then
+	echo "Error: no remote \"origin\"!" >&2
+	exit 1
+fi
+
+git pull "${RU}" "${BRANCH}"
+if [ "$?" != "0" ]
+then
+	echo "Error: failed to pull branch \"${BRANCH}\" from remote \"${RU}\"!" >&2
+	exit 1
+fi
+
+echo "*** ----------------------------------------------------"
+git push "${RO}" "${BRANCH}"
+if [ "$?" != "0" ]
+then
+	echo "Error: failed to puh branch \"${BRANCH}\" to remote \"${RU}\"!" >&2
+	exit 1
+fi
+
+echo "*** ----------------------------------------------------"
+echo "********************************************************"
+}
+
+action_update() {
+if [ -f "${MYGITREPOS}" ]
+then
+	declare -a GITDIRS
+	while read LINE
+	do
+		if [   -z "${LINE}"      ] ; then continue ; fi
+		if [ ! -d "${LINE}"      ] ; then continue ; fi
+		if [ ! -d "${LINE}/.git" ] ; then continue ; fi
+		GITDIRS=("${GITDIRS[@]}" "$LINE")
+	done <"${MYGITREPOS}"
+
+	for MGR in "${GITDIRS[@]}"
+	do
+		process_repro_update "${MGR}"
+	done
+
+else
+	echo "Error: cannot find \"\"!" >&2
+	exit 1
+fi
+}
+
+# === main entry point ================================================
+case $1 in
+update)
+	shift
+	action_update $*
+;;
+help)
+	action_usage
+	action_help
+;;
+*)
+	action_usage
+	exit 1
+;;
+esac
+
+exit 0
+
+#
+# end of file
+#
