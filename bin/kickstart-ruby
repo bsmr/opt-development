@@ -6,7 +6,7 @@ RMVR="p353"
 
 action_usage() {
 cat <<XEOF
-usage: ${BN} [ check | setup | help ]
+usage: ${BN} [ check | setup VERSION [PATCHLEVEL] [CHECK-REQUIREMENTS] | help ]
 XEOF
 }
 
@@ -16,14 +16,15 @@ cat <<XEOF
 	--- check ---------------------------------------------
 	Are all dependencies to build ruby fulfilled?!
 	--- setup ---------------------------------------------
-	The "setup" command needs two arguments: the version
-	and the patchlevel:
+	The "setup" command needs one argument: the version.
+	Optionally the patchlevel and if the requirements needs to be checked:
 
-		> ${BN} setup <VERSION> <PATCHLEVEL>
+		> ${BN} setup <VERSION> [<PATCHLEVEL>] [CHECK-REQUIREMENTS]
 
 	For example:
 
 		> ${BN} setup ${RMVM} ${RMVR}
+		> ${BN} setup ${RMVM} ${RMVR} yes
 
 	-------------------------------------------------------
 XEOF
@@ -62,10 +63,6 @@ sudo apt-get install            \
 }
 
 action_fetch_ruby() {
-# ftp.ruby-lang.org
-# ftp://ftp.ruby-lang.org/pub/ruby/1.9/
-# /pub/ruby/1.9
-# ruby-1.9.3-p286.tar.bz2
 if [ ! -d "${KSR_ARCS}" ]
 then
 	mkdir -p "${KSR_ARCS}"
@@ -156,14 +153,14 @@ KSREOF
 	exit 1
 fi
 
-if [ -z "${RP}" ]
-then
-	cat <<KSREOF
-Error: no ruby patchlevel specified!
-       use something like "${RMVR}" (without the quotes)
-KSREOF
-	exit 1
-fi
+#if [ -z "${RP}" ]
+#then
+#	cat <<KSREOF
+#Error: no ruby patchlevel specified!
+#       use something like "${RMVR}" (without the quotes)
+#KSREOF
+#	exit 1
+#fi
 
 KSR_ARCS=""
 for DD in "arcs" "Downloads"
@@ -182,18 +179,47 @@ KSREOF
 	exit 2
 fi
 
-RN="ruby-${RV}-${RP}"
-#RT="${RN}.tar.bz2"
-RT="${RN}.tar.xz"
+if [ -z "${RP}" ]
+then
+	RN="ruby-${RV}"
+else
+	case $RP in
+	y|yes)
+		RN="ruby-${RV}"
+		SK="${RP}"
+	;;
+	*)
+		RN="ruby-${RV}-${RP}"
+	;;
+	esac
+fi
+
+RA=""
+for ARC in "gz" "bz2" "xz"
+do
+	RZ="${RN}.tar.${ARC}"
+	RX="${KSR_ARCS}/${RZ}"
+	if [ ! -f "${RX}" ] ; then continue ; fi
+	RT="${RZ}"
+	RA="${RX}"
+	break
+done
+
 RS="${RN}"
 RB="${RN}-build"
 RD="/opt/ruby/${RV}"
 
-if [ -z "$SK" ]
-then
+case ${SK} in
+yes|y)
 	action_prerequisites
+;;
+esac
+
+if [ -z "${RA}" ]
+then
+	action_fetch_ruby	"${RV}" "${RP}"
 fi
-action_fetch_ruby	"${RV}" "${RP}"
+
 action_compile_ruby	"${RV}" "${RP}"
 }
 
