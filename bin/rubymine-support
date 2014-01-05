@@ -1,0 +1,75 @@
+#!/bin/bash
+
+SCRIPT_NAME=$(basename $0)
+SCRIPT_PATH=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# --- display usage information ---------------------------------------
+action_usage() {
+    cat <<EOF
+usage: ${SCRIPT_NAME} [ reset | help ]
+EOF
+}
+
+# --- display extended usage information ------------------------------
+action_help() {
+    cat <<EOF
+To be done...
+EOF
+}
+
+generate_license_key() {
+    local TARGET="$1"
+    if [ -f "${TARGET}" ]
+    then
+        echo "Error: file \"${TARGET}\" does exist!" >&2
+        echo "       Please remove it..."            >&2
+        exit 1
+    fi
+    ( cat | base64 -d | xz -d  ) >"${TARGET}" <<EOF
+/Td6WFoAAATm1rRGAgAhARwAAAAQz1jM4AFXALZdAH/hBABriBqsYl/sh3oIkJL4AJ6CWGS1MIV+
+nxpGZ4lJblzZi7aA/J6PFdux5TGUvF8bgK/3gOCU6pBnYrkP3R/KBT6CWYoyXhL8MUl/aFLjTut6
+R0iSqu18BpW4XyXAgTSluir2s7jWUjef5YhvBt1XRAxpYwZ9dp3N/y4YG1Htpsdj/7qqpA3b8PbJ
+kBkA8a7fNKLN1Ct2N0hxnWrzFRZH+1e4OiBUwp2un+yvdiCAzAHH4+AAAAAAHAHbQc76kIsAAdIB
+2AIAAFEFp0GxxGf7AgAAAAAEWVo=
+EOF
+}
+
+action_reset() {
+    local RMDB="${HOME}/.RubyMine60"
+    local RMDC="${RMDB}/config"
+    local RMFL="${RMDC}/rubymine60.key"
+    rm -rf "${RMDB}"
+    mkdir -p "${RMDC}"
+    generate_license_key "${RMFL}"
+}
+
+action_test() {
+    echo "Nothing in here..."
+    #generate_license_key "${HOME}/.backup/test-rubymine60.key"
+}
+
+# === main entry point ================================================
+case $1 in
+    reset)
+        shift
+        action_reset $*
+        ;;
+    test)
+	shift
+	action_test $*
+        ;;
+    help)
+	action_usage
+	action_help
+        ;;
+    *)
+	action_usage
+	exit 1
+        ;;
+esac
+
+exit 0
+
+#
+# end of file
+#
