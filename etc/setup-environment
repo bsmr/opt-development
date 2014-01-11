@@ -36,6 +36,7 @@ for X in						\
 		"-/opt/java/clojure"			\
 		"-/opt/java/jython"			\
 		"-/opt/java/jruby"			\
+                "/opt/android/tools"                    \
 		"/opt/android/sdk/tools"		\
 		"/opt/android/sdk/platform-tools"	\
 		"/opt/android/ndk"			\
