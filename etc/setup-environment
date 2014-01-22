@@ -66,6 +66,7 @@ for X in						\
 		"/opt/jetbrains/webstorm"		\
 		"/opt/jetbrains/pycharm"		\
 		"-/opt/codeblocks"			\
+		"/opt/sublime"				\
 		""
 	do
 		if [ -z "$X" ] ; then continue ; fi
