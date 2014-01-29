@@ -32,7 +32,7 @@ for X in						\
 		"/opt/java/apache/ant"			\
 		"/opt/java/apache/maven"		\
 		"/opt/java/apache/tomcat"		\
-		"-/opt/clojure"				\
+		"/opt/clojure"				\
 		"-/opt/java/clojure"			\
 		"-/opt/java/jython"			\
 		"-/opt/java/jruby"			\
