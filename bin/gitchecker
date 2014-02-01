@@ -25,7 +25,6 @@ local REPO="$1"
 
 echo "********************************************************"
 echo "*** $REPO"
-echo "*** ----------------------------------------------------"
 
 cd "${REPO}"
 
@@ -50,6 +49,7 @@ then
 fi
 
 # update from origin
+echo "*** --- git pull origin --------------------------------"
 git pull "${RO}" "${BRANCH}"
 if [ "$?" != "0" ]
 then
@@ -58,7 +58,7 @@ then
 fi
 
 # fetch from upstream
-echo "*** ----------------------------------------------------"
+echo "*** --- git fetch upstream -----------------------------"
 git fetch "${RU}"
 if [ "$?" != "0" ]
 then
@@ -67,7 +67,7 @@ then
 fi
 
 # update from upstream
-echo "*** ----------------------------------------------------"
+echo "*** --- git pull upstream ------------------------------"
 git pull "${RU}" "${BRANCH}"
 if [ "$?" != "0" ]
 then
@@ -76,16 +76,13 @@ then
 fi
 
 # push to origin
-echo "*** ----------------------------------------------------"
+echo "*** --- git push origin --------------------------------"
 git push "${RO}" "${BRANCH}"
 if [ "$?" != "0" ]
 then
 	echo "Error: failed to puh branch \"${BRANCH}\" to remote \"${RU}\"!" >&2
 	exit 1
 fi
-
-echo "*** ----------------------------------------------------"
-echo "********************************************************"
 }
 
 action_update() {
@@ -104,6 +101,8 @@ then
 	do
 		process_repro_update "${MGR}"
 	done
+
+        echo "********************************************************"
 
 else
 	echo "Error: cannot find \"\"!" >&2
