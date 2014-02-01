@@ -57,6 +57,15 @@ then
 	exit 1
 fi
 
+# fetch from upstream
+echo "*** ----------------------------------------------------"
+git fetch "${RU}"
+if [ "$?" != "0" ]
+then
+    echo "Error: failed to fetch (ALL) from remote \"${RU}\"!" >&2
+	exit 1
+fi
+
 # update from upstream
 echo "*** ----------------------------------------------------"
 git pull "${RU}" "${BRANCH}"
