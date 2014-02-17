@@ -21,6 +21,7 @@ for X in						\
 		"/opt/lisp/sbcl"			\
 		"/opt/lisp/clisp"			\
 		"/opt/lisp/ecl"				\
+		"/opt/lisp/gcl"				\
 		"-/opt/haskell/ghc"			\
 		"-/opt/haskell/platform"		\
 		"-/opt/ocaml"				\
