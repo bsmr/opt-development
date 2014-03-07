@@ -55,8 +55,8 @@ for X in						\
 		"-/opt/scheme/gambit"			\
 		"-/opt/scheme/mit"			\
 		"-/opt/scheme/racket"			\
-		"-/opt/prolog/swi"			\
-		"/opt/prolog/gnu"			\
+		"/opt/prolog/swi"			\
+		"-/opt/prolog/gnu"			\
 		"-/opt/swig"				\
 		"/opt/emacs"				\
 		"-/opt/xemacs"				\
