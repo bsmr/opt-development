@@ -62,6 +62,11 @@ action_setup_common() {
 	"./otp_build" remove_prebuilt_files
 	"./otp_build" autoconf
 	"./otp_build" configure --prefix="${PREFIX}" --with-gmp
+        # hack for R17B00 source tarball
+        if [ ! -f "system/README" ]
+        then
+            touch "system/README"
+        fi
 	# full build
 	for ACT in "all" "install" "docs" "install-docs"
 	do
