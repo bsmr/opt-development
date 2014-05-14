@@ -298,6 +298,11 @@ action_setup_quicklisp() {
 QLB="/opt/lisp/quicklisp"
 mkdir -p "${QLB}"
 cd "${QLB}"
+
+# =====================================================================
+# sudo -H apt-get install curl
+# =====================================================================
+
 #wget -nc -O "http://beta.quicklisp.org/quicklisp.lisp"
 curl -O http://beta.quicklisp.org/quicklisp.lisp
 QLL="quicklisp.lisp"
@@ -321,13 +326,38 @@ else
 fi
 }
 
+action_bootstrap() {
+local SBCL_RELEASE="$1"
+# $0 sbcl-download "${SBCL_RELEASE}"
+local OPT_SBCL_BASE="/opt/lisp/sbcl"
+#local OPT_SBCL_ROOT=""
+mkdir -p "${OPT_SBCL_BASE}"
+cd "${OPT_SBCL_BASE}"
+tar xvf "${SBCLDLBASE}/sbcl-1.1.18-x86-64-linux-binary.tar.bz2"
+cd "sbcl-1.1.18-x86-64-linux"
+INSTALL_ROOT="${OPT_SBCL_BASE}/bootstrap" sh install.sh
+export SBCL_HOME="${OPT_SBCL_BASE}/bootstrap/lib/sbcl"
+local PATH_OLD="${PATH}"
+export PATH="${OPT_SBCL_BASE}/bootstrap/bin:${PATH}"
+cd "/tmp"
+tar xvf "${SBCLDLBASE}/sbcl-1.1.18-source.tar.bz2"
+cd "sbcl-1.1.18"
+sh make.sh --prefix="${OPT_SBCL_BASE}/bootstrap" 
+sh install.sh
+cd "/tmp"
+unset INSTALL_ROOT
+unset SBCL_HOME
+rm -rf "sbcl-1.1.18"
+#"$0" sbcl-src-install "1.1.18"
+}
+
 action_usage() {
 BN=$(basename $0)
 cat <<EOF
 usage: ${BN} [ACTION]
-	ACTION: sbcl-download RELEASE | sbcl-src-install RELEASE | sbcl-git-install        |
-                sbcl-slime-core       | setup-quicklisp          | setup-emacs [x11 | nox] |
-		help
+	ACTION: sbcl-download RELEASE  | sbcl-src-install RELEASE | sbcl-git-install        |
+                sbcl-slime-core        | setup-quicklisp          | setup-emacs [x11 | nox] |
+		sbcl-bootstrap RELEASE | help
 EOF
 }
 
@@ -353,30 +383,33 @@ SBCLDLBASE="${DLBASE}/sbcl.org"
 case $1 in
 sbcl-download|sd)
 	action_download_sbcl "$2"
-;;
+	;;
 sbcl-src-install|ssi)
 	action_install_sbcl_from_source "$2"
-;;
+	;;
 sbcl-git-install|sgi)
 	action_install_sbcl_from_git
-;;
+	;;
 sbcl-slime-core|ssc)
 	action_sbcl_generate_slime_core
-;;
+	;;
 setup-quicklisp|sql)
 	action_setup_quicklisp
-;;
+	;;
+sbcl-bootstrap|sbs)
+	action_bootstrap "$2"
+	;;
 setup-emacs|se)
 	shift
 	action_install_emacs $*
-;;
+	;;
 help|-h|--help|?)
 	action_help
-;;
+	;;
 *)
 	action_usage
 	exit 1
-;;
+	;;
 esac
 
 exit 0
