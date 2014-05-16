@@ -37,6 +37,17 @@ EOF
 action_setup_common() {
 	local PREFIX="$1"
 
+	# get CPU count
+	NUM_CPUS=$(cat /proc/cpuinfo | grep '^processor' | wc -l)
+	case $NUM_CPUS in
+	0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)
+		CPUSPLUS1=$((NUM_CPUS + 1))
+		MAKEFLAGS="-j${CPUSPLUS1}"
+		export MAKEFLAGS
+		echo "*** MAKEFLAGS = $MAKEFLAGS"
+		;;
+	esac
+
 	# Setting up enviroment variables
 	echo "${TITLE} setting up environment"
 	ERL_TOP=$(pwd)
@@ -48,7 +59,8 @@ action_setup_common() {
 	echo "${TITLE} configure"
 	"./otp_build" save_bootstrap
 	"./otp_build" autoconf
-	"./otp_build" configure --prefix="${PREFIX}" --with-gmp
+	#"./otp_build" configure --prefix="${PREFIX}" --with-gmp
+	"./otp_build" configure --prefix="${PREFIX}"
 	# simple build
 	for ACT in "all" "install"
 	do
@@ -61,7 +73,8 @@ action_setup_common() {
 	hash -r
 	"./otp_build" remove_prebuilt_files
 	"./otp_build" autoconf
-	"./otp_build" configure --prefix="${PREFIX}" --with-gmp
+	#"./otp_build" configure --prefix="${PREFIX}" --with-gmp
+	"./otp_build" configure --prefix="${PREFIX}"
         # hack for R17B00 source tarball
         if [ ! -f "system/README" ]
         then
