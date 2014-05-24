@@ -14,6 +14,10 @@ TITLE="+++ ACTION:"
 OPTERL="/opt/erlang/otp"
 ERLLINK="${OPTERL}/active"
 
+# gmp: needs base path!
+# --with-gmp=/opt/gnu/gmp/6.0.0
+GMPBASE="/opt/gnu/gmp/active"
+
 
 action_usage() {
 	cat <<EOF
@@ -60,7 +64,8 @@ action_setup_common() {
 	"./otp_build" save_bootstrap
 	"./otp_build" autoconf
 	#"./otp_build" configure --prefix="${PREFIX}" --with-gmp
-	"./otp_build" configure --prefix="${PREFIX}"
+	#"./otp_build" configure --prefix="${PREFIX}"
+	"./otp_build" configure --prefix="${PREFIX}" --with-gmp="${GMPBASE}"
 	# simple build
 	for ACT in "all" "install"
 	do
@@ -74,7 +79,8 @@ action_setup_common() {
 	"./otp_build" remove_prebuilt_files
 	"./otp_build" autoconf
 	#"./otp_build" configure --prefix="${PREFIX}" --with-gmp
-	"./otp_build" configure --prefix="${PREFIX}"
+	#"./otp_build" configure --prefix="${PREFIX}"
+	"./otp_build" configure --prefix="${PREFIX}" --with-gmp="${GMPBASE}"
         # hack for R17B00 source tarball
         if [ ! -f "system/README" ]
         then
