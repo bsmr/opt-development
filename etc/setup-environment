@@ -12,6 +12,7 @@ for X in						\
 		"/opt/gcc"				\
 		"/opt/llvm"				\
 		"/opt/cmake"				\
+		"/opt/qemu"				\
 		"/opt/erlang/otp"			\
 		"/opt/erlang/otp/active/lib/erlang"	\
 		"/opt/erlang/rebar"			\
