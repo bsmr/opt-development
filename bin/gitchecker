@@ -8,7 +8,7 @@ MYGITREPOS="${HOME}/.mygitrepositorylist"
 # --- display usage information ---------------------------------------
 action_usage() {
 cat <<EOF
-usage: ${SCRIPT_NAME} [ update | help ]
+usage: ${SCRIPT_NAME} [ update | edit | help ]
 EOF
 }
 
@@ -85,6 +85,10 @@ then
 fi
 }
 
+action_edit() {
+editor "${MYGITREPOS}"
+}
+
 action_update() {
 if [ -f "${MYGITREPOS}" ]
 then
@@ -112,18 +116,21 @@ fi
 
 # === main entry point ================================================
 case $1 in
+edit)
+	action_edit
+	;;
 update)
 	shift
 	action_update $*
-;;
+	;;
 help)
 	action_usage
 	action_help
-;;
+	;;
 *)
 	action_usage
 	exit 1
-;;
+	;;
 esac
 
 exit 0
