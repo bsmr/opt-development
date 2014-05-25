@@ -105,7 +105,7 @@ then
         echo "********************************************************"
 
 else
-	echo "Error: cannot find \"\"!" >&2
+	echo "Error: cannot find \"${MYGITREPOS}\"!" >&2
 	exit 1
 fi
 }
