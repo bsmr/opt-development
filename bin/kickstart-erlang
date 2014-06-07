@@ -191,7 +191,7 @@ action_setup_archive() {
 }
 
 action_setup_git() {
-	BUILDTS=$(date --utc '+%Y%m%d-%H%M')
+	BUILDTS=$(date --utc '+%Y%m%d/%H%M')
 	PREFIX="${OPTERL}/git/${BUILDTS}"
 
 	action_setup_common "${PREFIX}"
