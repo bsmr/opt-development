@@ -8,7 +8,7 @@ MYGITREPOS="${HOME}/.mygitrepositorylist"
 # --- display usage information ---------------------------------------
 action_usage() {
 cat <<EOF
-usage: ${SCRIPT_NAME} [ update | edit | help ]
+usage: ${SCRIPT_NAME} [ setup FORK UPSTREAM | update | edit | help ]
 EOF
 }
 
@@ -114,8 +114,65 @@ else
 fi
 }
 
+action_setup() {
+local RF="$1"
+local RU="$2"
+local RX=$(echo "${RF}" | awk -F/ '{ print $NF }')
+local RD=$(basename "${RX}" ".git")
+local RP=$(pwd)
+cat <<EOF
+*** gitchecker setup:
+***       fork: ${RF}
+***   upstream: ${RU}
+***       repo: ${RD}
+***       path: ${RP}
+EOF
+echo -n "*** Cloning: "
+RES=$(git clone "${RF}" "${RD}" 2>&1)
+if [ "X$?" != "X0" ]
+then
+	echo "Error: clone!"
+	exit 1
+else
+	echo "done."
+fi
+echo -n "*** Change directory: "
+cd "${RD}"
+if [ "X$?" != "X0" ]
+then
+	echo "Error: cd!"
+	exit 1
+else
+	echo "done."
+fi
+echo -n "*** Adding upstream: "
+RES=$(git remote add upstream "${RU}" 2>&1)
+if [ "X$?" != "X0" ]
+then
+	echo    "Error: adding upstream!"
+	echo -e "   =>\n${RES}"
+	exit 1
+else
+	echo "done."
+fi
+echo -n "*** Adding path to config: "
+RES=$( ( echo -n ";" && pwd ) >>"${MYGITREPOS}" )
+if [ "X$?" != "X0" ]
+then
+	echo "Error: adding path to config!"
+	exit 1
+else
+	echo "done."
+fi
+echo "*** Completed."
+}
+
 # === main entry point ================================================
 case $1 in
+add|a|setup|s)
+	shift
+	action_setup $*
+	;;
 edit)
 	action_edit
 	;;
