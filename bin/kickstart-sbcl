@@ -52,7 +52,6 @@ wget -4 -nc "ftp://ftp.gnu.org/gnu/emacs/emacs-24.1.tar.bz2"
 
 action_download_sbcl() {
 SBCLV="$1"
-#SBCLV="1.1.0"
 if [ -z "$SBCLV" ]
 then
 	echo "Error: no sbcl version specified!"
@@ -67,6 +66,8 @@ for F in 						\
 	"sbcl-${SBCLV}-source.tar.bz2"			\
 	"sbcl-${SBCLV}-x86-64-linux-binary.tar.bz2"	\
 	"sbcl-${SBCLV}-x86-linux-binary.tar.bz2"	\
+	"sbcl-${SBCLV}-armel-linux-binary.tar.bz2"	\
+	"sbcl-${SBCLV}-armhf-linux-binary.tar.bz2"	\
 	""
 do
 	if [ -z "$F" ] ; then continue ; fi
@@ -86,6 +87,10 @@ x86_64)
 x86)
 	SBCLBINARC="sbcl-1.0.57-x86-linux-binary.tar.bz2"
 	SBCLBINDIR="sbcl-1.0.57-x86-linux"
+	;;
+armv7l)
+	SBCLBINARC="sbcl-1.0.57-armhf-linux-binary.tar.bz2"
+	SBCLBINDIR="sbcl-1.0.57-armhf-linux"
 	;;
 esac
 if [ -z "$SBCLBINARC" ]
@@ -327,27 +332,106 @@ fi
 }
 
 action_bootstrap() {
-local SBCL_RELEASE="$1"
+SBCL_RELEASE="$1"
+if [ -z "${SBCL_RELEASE}" ] ; then
+	echo "ERROR: no SBCL release specified!" >&2
+	exit 1
+fi
+
+BASE_ARCH=$(uname -m)
+case ${BASE_ARCH} in
+x86_64)
+	SBCL_ARCH="x86-64"
+	;;
+x86)
+	SBCL_ARCH="x86"
+	;;
+armv7l)
+	SBCL_ARCH="armhf"
+	;;
+*)
+	echo "ERROR: unsupported system architecture \"${BASE_ARCH}\"!" >&2
+	exit 1
+	;;
+esac
+
+SBCL_NAME="sbcl-${SBCL_RELEASE}-${SBCL_ARCH}-linux"
+SBCL_TARB="${SBCL_NAME}-binary.tar.bz2"
+SBCLBINARC="${SBCL_TARB}"
+SBCLBINDIR="${SBCL_NAME}"
+
+SBCL_ARCHIVE_PATH="${SBCLDLBASE}/${SBCL_TARB}"
+if [ ! -f "${SBCL_ARCHIVE_PATH}" ] ; then
+	echo "ERROR: can not access SBCL tarball!"	>&2
+	echo "       ${SBCL_ARCHIVE_PATH}"		>&2
+	exit 1
+fi
+
+PATH_OLD="${PATH}"
+
 # $0 sbcl-download "${SBCL_RELEASE}"
-local OPT_SBCL_BASE="/opt/lisp/sbcl"
-#local OPT_SBCL_ROOT=""
-mkdir -p "${OPT_SBCL_BASE}"
-cd "${OPT_SBCL_BASE}"
-tar xvf "${SBCLDLBASE}/sbcl-1.1.18-x86-64-linux-binary.tar.bz2"
-cd "sbcl-1.1.18-x86-64-linux"
-INSTALL_ROOT="${OPT_SBCL_BASE}/bootstrap" sh install.sh
-export SBCL_HOME="${OPT_SBCL_BASE}/bootstrap/lib/sbcl"
-local PATH_OLD="${PATH}"
-export PATH="${OPT_SBCL_BASE}/bootstrap/bin:${PATH}"
+
+OPT_SBCL_BASE="/opt/lisp/sbcl"
+SBCL_BOOTSTRAP_BASE="${OPT_SBCL_BASE}/bootstrap"
+SBCL_SETUP_BASE="/tmp/SBCL/SETUP"
+SBCL_SETUP_BIN="${SBCL_SETUP_BASE}/BINARY"
+SBCL_SETUP_SRC="${SBCL_SETUP_BASE}/SOURCE"
+
 cd "/tmp"
-tar xvf "${SBCLDLBASE}/sbcl-1.1.18-source.tar.bz2"
-cd "sbcl-1.1.18"
-sh make.sh --prefix="${OPT_SBCL_BASE}/bootstrap" 
+if [ -d "SBCL" ] ; then
+	rm -rf "SBCL"
+fi
+
+echo "*** sbcl bootstrap: binary setup ***"
+mkdir -p "${SBCL_SETUP_BIN}"
+cd "${SBCL_SETUP_BIN}"
+
+tar xf "${SBCL_ARCHIVE_PATH}"
+
+if [ ! -d "${SBCLBINDIR}" ] ; then
+	echo "ERROR: failed to extract binary tarball!"	>&2
+	echo "       ${SBCL_ARCHIVE_PATH}"		>&2
+	exit 1
+fi
+
+cd "${SBCLBINDIR}"
+export INSTALL_ROOT="${SBCL_BOOTSTRAP_BASE}"
 sh install.sh
-cd "/tmp"
 unset INSTALL_ROOT
+
+echo "*** sbcl bootstrap: source setup ***"
+export SBCL_HOME="${SBCL_BOOTSTRAP_BASE}/lib/sbcl"
+export PATH="${SBCL_BOOTSTRAP_BASE}/bin:${PATH}"
+
+mkdir -p "${SBCL_SETUP_SRC}"
+cd "${SBCL_SETUP_SRC}"
+
+SBCL_SOURCE_PATH="${SBCLDLBASE}/sbcl-${SBCL_RELEASE}-source.tar.bz2"
+if [ ! -f "${SBCL_SOURCE_PATH}" ] ; then
+	echo "ERROR: failed to locate SBCL source tarball"	>&2
+	echo "       ${SBCL_SOURCE_PATH}"			>&2
+	exit 1
+fi
+
+tar xf "${SBCL_SOURCE_PATH}"
+
+if [ ! -d "sbcl-${SBCL_RELEASE}" ] ; then
+	echo "ERROR: failed to extract source tarball!"	>&2
+	echo "       ${SBCL_SOURCE_PATH}"		>&2
+	exit 1
+fi
+
+cd "sbcl-${SBCL_RELEASE}"
+sh make.sh --prefix="${SBCL_BOOTSTRAP_BASE}" 
+sh install.sh
 unset SBCL_HOME
-rm -rf "sbcl-1.1.18"
+
+export PATH="${PATH_OLD}"
+
+#cd "/tmp"
+#if [ -d "SBCL" ] ; then
+#	rm -rf "SBCL"
+#fi
 #"$0" sbcl-src-install "1.1.18"
 }
 
@@ -397,7 +481,9 @@ setup-quicklisp|sql)
 	action_setup_quicklisp
 	;;
 sbcl-bootstrap|sbs)
-	action_bootstrap "$2"
+	#action_bootstrap "$2"
+	shift
+	action_bootstrap $*
 	;;
 setup-emacs|se)
 	shift
