@@ -8,6 +8,8 @@ fi
 
 for X in						\
 		"${DBASE}"				\
+		"/opt/gp/utils"				\
+		"/opt/sdcc"				\
 		"/opt/ttf2pt1"				\
 		"/opt/gcc"				\
 		"/opt/llvm"				\
