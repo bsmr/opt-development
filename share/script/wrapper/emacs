@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# base emacs path
+PATH="/opt/emacs/active/bin:$PATH"
+# add java jdk
+PATH="/opt/java/jdk/active/jre/bin:/opt/java/jdk/active/bin:$PATH"
+# add SBCL
+PATH="/opt/lisp/sbcl/active/bin:$PATH"
+# add Erlang/OTP
+PATH="/opt/erlang/otp/active/bin:/opt/erlang/otp/active/lib/erlang/bin:$PATH"
+
+# start it...
+exec emacs
+
+#
+# End Of File
+#

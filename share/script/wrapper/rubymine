@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PATH="/opt/jetbrains/rubymine/active/bin:/opt/ruby/active/bin:$PATH"
+
+exec rubymine.sh
+
+#
+# End Of File
+#

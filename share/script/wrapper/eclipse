@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PATH="/opt/java/eclipse/active:/opt/java/jdk/active/jre/bin:/opt/java/jdk/active/bin:$PATH"
+
+exec eclipse
+
+#
+# End Of File
+#
