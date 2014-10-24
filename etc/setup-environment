@@ -3,7 +3,16 @@
 DBASE="/opt/development"
 if [ -z "${MANPATH}" ]
 then
-	MANPATH="/usr/share/man"
+	for D in "/usr/man" "/usr/share/man" "/usr/local/man" "/usr/local/share/man"
+	do
+		if [ ! -d "${D}" ] ; then continue ; fi
+		if [ -z "${MANPATH}" ]
+		then
+			MANPATH="${D}"
+		else
+			MANPATH="${D}:${MANPATH}"
+		fi
+	done
 fi
 
 for X in						\
@@ -77,31 +86,37 @@ for X in						\
                 "-/opt/mono/monodevelop"                \
 		""
 	do
-		if [ -z "$X" ] ; then continue ; fi
+		if [ -z "${X}" ] ; then continue ; fi
 		if [ -d "${X}/active" ] ; then X="${X}/active" ; fi
-		if [ ! -d "$X" ] ; then continue ; fi
-		R=$(echo "$PATH" | grep "$X")
-		if [ -n "$R" ] ; then continue ; fi
-		for P in "$X/bin" "$X"
+		if [ ! -d "${X}" ] ; then continue ; fi
+		R=$(echo "${PATH}" | grep "${X}")
+		if [ -z "${R}" ] ; then
+			for P in "${X}/bin" "${X}"
+			do
+				if [ -d "${P}" ] ; then
+					PATH="${P}:${PATH}"
+				fi
+			done
+		fi
+		for M in "${X}/man" "${X}/share/man"
 		do
-			if [ ! -d "$P" ] ; then continue ; fi
-			PATH="$P:$PATH"
-			break
-		done
-		for M in "$X/man" "$X/share/man"
-		do
-			if [ ! -d "$M" ] ; then continue ; fi
-			MANPATH="$M:$MANPATH"
+			if [ ! -d "${M}" ] ; then continue ; fi
+			R=$(echo "${MANPATH}" | grep "${M}")
+			if [ -z "${R}" ] ; then
+				if [ -d "${M}" ] ; then
+					MANPATH="${M}:${MANPATH}"
+				fi
+			fi
 		done
 	done
 
 export PATH MANPATH
 
-if [ -x "/opt/jetbrains/rubymine/active/bin/rubymine.sh" ]
-then
-	alias rubymine='/opt/jetbrains/rubymine/active/bin/rubymine.sh'
-	alias bgrm='rubymine </dev/null >/dev/null 2>&1'
-fi
+#if [ -x "/opt/jetbrains/rubymine/active/bin/rubymine.sh" ]
+#then
+#	alias rubymine='/opt/jetbrains/rubymine/active/bin/rubymine.sh'
+#	alias bgrm='rubymine </dev/null >/dev/null 2>&1'
+#fi
 
 hash -r
 ulimit -c unlimited

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PATH="/opt/jetbrains/pycharm/active/bin:/opt/java/jdk/active/bin:$PATH"
+
+exec pycharm.sh
+
+#
+# End Of File
+#
