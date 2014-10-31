@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PATH="/opt/jetbrains/idea/active/bin:/opt/java/jdk/active/bin:$PATH"
+
+exec idea.sh
+
+#
+# End Of File
+#

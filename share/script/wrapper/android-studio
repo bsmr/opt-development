@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PATH_STUDIO="/opt/android/studio/bin"
+PATH_ANDROID="/opt/android/sdk/platform-tools:/opt/android/sdk/tools"
+PATH_JAVA="/opt/java/jdk/active/bin:/opt/java/jdk/active/jre/bin"
+
+PATH="${PATH_STUDIO}:${PATH_ANDROID}:${PATH_JAVA}:${PATH}"
+
+exec studio.sh
+
+#
+# End Of File
+#
