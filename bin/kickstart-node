@@ -4,7 +4,7 @@ BN=$(basename $0)
 
 action_usage() {
 cat <<EOF
-usage: ${BN}
+usage: ${BN} [ git-setup | setup | help ]
 EOF
 }
 
@@ -35,17 +35,75 @@ make -j9
 make install
 }
 
+function action_git_setup {
+
+TS=$(date '+%Y%m%d-%H%M%S')
+
+GITURI="https://github.com/joyent/node.git"
+GITSRC="node"
+GITDIR="$HOME/temporary/setup"
+OPTDIR="/opt/node"
+DSTDIR="${OPTDIR}/git/${TS}"
+
+if [ ! -d "${GITDIR}" ] ; then
+	mkdir -p "${GITDIR}"
+fi
+
+pushd "${GITDIR}"
+
+git clone "${GITURI}" "${GITSRC}"
+
+pushd "${GITSRC}"
+
+(
+	echo "*** configure ***"
+	./configure --prefix="${DSTDIR}" --gdb
+	if [ "$?" != "0" ] ; then
+		echo "Error: configure failed!" >&2
+		exit 1
+	fi
+	echo "*** build ***"
+	nice make -j9 "all"
+	if [ "$?" != "0" ] ; then
+		echo "Error: build failed!" >&2
+		exit 1
+	fi
+	echo "*** test ***"
+	make "test"
+	echo "*** docs ***"
+	make "doc"
+	echo "*** install ***"
+	make "install"
+	if [ "$?" != "0" ] ; then
+		echo "Error: install failed!" >&2
+		exit 1
+	fi
+) 2>&1 | tee "../log-node-build.txt"
+
+popd
+
+rm -rf "${GITSRC}"
+
+popd
+
+cd "${OPTDIR}" && rm "active" && ln -sf "git/${TS}" "active"
+
+}
+
 case $1 in
+git-setup)
+	action_git_setup
+	;;
 setup)
 	action_setup
-;;
+	;;
 help)
 	action_help
-;;
+	;;
 *)
 	action_usage
 	exit 1
-;;
+	;;
 esac
 
 exit 0
