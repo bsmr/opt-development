@@ -10,7 +10,7 @@ PATH="/opt/lisp/sbcl/active/bin:$PATH"
 PATH="/opt/erlang/otp/active/bin:/opt/erlang/otp/active/lib/erlang/bin:$PATH"
 
 # start it...
-exec emacs
+exec emacs $*
 
 #
 # End Of File
