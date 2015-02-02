@@ -1,10 +1,11 @@
 #!/bin/bash
 
 BN=$(basename $0)
+#DEBUG="yes"
 
 action_usage() {
 cat <<EOF
-usage: ${BN} [ git-setup | setup | help ]
+usage: ${BN} [ node-git-setup | iojs-git-setup | setup | help ]
 EOF
 }
 
@@ -37,13 +38,20 @@ make install
 
 function action_git_setup {
 
-TS=$(date '+%Y%m%d-%H%M%S')
+if [ "${DEBUG}" = "yes" ] ; then
+cat <<EOT
+*** DEBUG *************************************************************
+* TS     = ${TS}
+* GITURI = ${GITURI}
+* GITSRC = ${GITSRC}
+* GITDIR = ${GITDIR}
+* OPTDIR = ${OPTDIR}
+* DSTDIR = ${DSTDIR}
+***********************************************************************
+EOT
 
-GITURI="https://github.com/joyent/node.git"
-GITSRC="node"
-GITDIR="$HOME/temporary/setup"
-OPTDIR="/opt/node"
-DSTDIR="${OPTDIR}/git/${TS}"
+exit 42
+fi
 
 if [ ! -d "${GITDIR}" ] ; then
 	mkdir -p "${GITDIR}"
@@ -78,7 +86,7 @@ pushd "${GITSRC}"
 		echo "Error: install failed!" >&2
 		exit 1
 	fi
-) 2>&1 | tee "../log-node-build.txt"
+) 2>&1 | tee "../log-${GITSRC}-build.txt"
 
 popd
 
@@ -86,13 +94,38 @@ rm -rf "${GITSRC}"
 
 popd
 
-cd "${OPTDIR}" && rm "active" && ln -sf "git/${TS}" "active"
+cd "${OPTDIR}" && rm "active" ; ln -sf "git/${TS}" "active"
 
 }
 
+function action_node_git_setup {
+GITURI="https://github.com/joyent/node.git"
+GITSRC="node"
+GITDIR="$HOME/temporary/setup"
+OPTDIR="/opt/node"
+DSTDIR="${OPTDIR}/git/${TS}"
+
+action_git_setup
+}
+
+function action_iojs_git_setup {
+GITURI="https://github.com/iojs/io.js.git"
+GITSRC="io.js"
+GITDIR="$HOME/temporary/setup"
+OPTDIR="/opt/io.js"
+DSTDIR="${OPTDIR}/git/${TS}"
+
+action_git_setup
+}
+
+TS=$(date '+%Y%m%d-%H%M%S')
+
 case $1 in
-git-setup)
-	action_git_setup
+iojs-git-setup)
+	action_iojs_git_setup
+	;;
+node-git-setup)
+	action_node_git_setup
 	;;
 setup)
 	action_setup

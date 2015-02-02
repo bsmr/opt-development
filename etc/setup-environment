@@ -59,6 +59,7 @@ for X in						\
 		"/opt/java/eclipse"			\
 		"/opt/java/netbeans"			\
 		"/opt/node"				\
+		"-/opt/io.js"				\
 		"-/opt/gambc/current"			\
 		"-/opt/racket"				\
 		"-/opt/lua"				\
