@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATH="/opt/jetbrains/idea/active/bin:/opt/java/jdk/active/bin:$PATH"
+PATH="/opt/java/jdk/active/bin:$PATH"
 
 JAVA_HOME_DIR="/opt/java/jdk/active"
 if [ -d "${JAVA_HOME_DIR}" ] ; then
@@ -12,7 +12,14 @@ if [ -d "${ANDROID_HOME_DIR}" ] ; then
 	ANDROID_HOME="${ANDROID_HOME_DIR}"
 fi
 
-exec idea.sh
+GDX_SETUP_JAR="/opt/development/share/lib/gdx-setup.jar"
+
+if [ ! -f "${GDX_SETUP_JAR}" ] ; then
+	echo "Error: failed to locate gdx-setup.jar!" >&2
+	exit 1
+fi
+
+exec java -jar "${GDX_SETUP_JAR}" $*
 
 #
 # End Of File
