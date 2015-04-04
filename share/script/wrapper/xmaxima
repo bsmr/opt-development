@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PATH="/opt/lisp/maxima/active/bin:/opt/lisp/sbcl/active/bin:$PATH"
+
+exec xmaxima
+
+#
+# End Of File
+#

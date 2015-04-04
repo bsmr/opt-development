@@ -34,6 +34,7 @@ for X in						\
 		"/opt/lisp/clisp"			\
 		"/opt/lisp/ecl"				\
 		"/opt/lisp/gcl"				\
+		"/opt/lisp/maxima/active"		\
 		"-/opt/haskell/ghc"			\
 		"-/opt/haskell/platform"		\
 		"-/opt/ocaml"				\
@@ -58,7 +59,8 @@ for X in						\
 		"-/opt/eclipse"				\
 		"/opt/java/eclipse"			\
 		"/opt/java/netbeans"			\
-		"/opt/node"				\
+		"/opt/ecmascript"			\
+		"-/opt/node"				\
 		"-/opt/io.js"				\
 		"-/opt/gambc/current"			\
 		"-/opt/racket"				\
