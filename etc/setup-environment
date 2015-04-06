@@ -60,6 +60,7 @@ for X in						\
 		"/opt/java/eclipse"			\
 		"/opt/java/netbeans"			\
 		"/opt/ecmascript"			\
+		"/opt/atom"				\
 		"-/opt/node"				\
 		"-/opt/io.js"				\
 		"-/opt/gambc/current"			\
