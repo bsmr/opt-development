@@ -1,0 +1,58 @@
+#!/bin/bash
+
+SCRIPT_NAME=$(basename $0)
+SCRIPT_PATH=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# --- display usage information ---------------------------------------
+action_usage() {
+cat <<EOF
+usage: ${SCRIPT_NAME} [ dependencies | recompile | edit | help ]
+EOF
+}
+
+# --- display extended usage information ------------------------------
+action_help() {
+cat <<EOF
+To be done...
+EOF
+}
+
+# === special actions =================================================
+function action_install_dependencies {
+sudo apt-get install build-essential git libgnome-keyring-dev fakeroot
+}
+
+function action_recompile {
+pushd "/home/ADESTIS/bm/repos/github.com/bsmr-x-script/atom"
+
+if [ -x "script/build" -a -x "script/grunt" ] ; then
+	script/build
+	script/grunt install --install-dir "/opt/atom/git"
+fi
+
+popd
+}
+
+# === main entry point ================================================
+case $1 in
+dependencies)
+	action_install_dependencies
+	;;
+recompile)
+	action_recompile
+	;;
+help)
+	action_usage
+	action_help
+	;;
+*)
+	action_usage
+	exit 1
+	;;
+esac
+
+exit 0
+
+#
+# end of file
+#
