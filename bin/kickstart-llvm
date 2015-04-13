@@ -1,0 +1,94 @@
+#!/bin/bash
+
+SCRIPT_NAME=$(basename $0)
+SCRIPT_PATH=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+LLVM_SRC_BASE="/home/ADESTIS/bm/source/llvm"
+LLVM_OPT_BASE="/opt/llvm"
+LLVM_OPT_PREF="${LLVM_OPT_BASE}/svn"
+
+# --- display usage information ---------------------------------------
+action_usage() {
+cat <<EOF
+usage: ${SCRIPT_NAME} [ TBD | edit | help ]
+EOF
+}
+
+# --- display extended usage information ------------------------------
+action_help() {
+cat <<EOF
+To be done...
+EOF
+}
+
+# === special actions =================================================
+
+action_setup_svn() {
+
+	mkdir -p "${LLVM_SRC_BASE}"
+	pushd "${LLVM_SRC_BASE}"
+
+	svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
+
+	pushd "llvm/tools"
+	svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
+	popd
+
+	pushd "llvm/tools/clang/tools"
+	svn co http://llvm.org/svn/llvm-project/clang-tools-extra/trunk extra
+	popd
+
+	pushd "llvm/projects"
+	svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
+	popd
+
+	mkdir "build"
+	pushd "build"
+
+	../llvm/configure --prefix="${LLVM_OPT_PREF}" --enable-optimized && \
+		nice make -j9 all && \
+		make check && \
+		nice make install
+
+	popd
+	popd
+
+}
+
+
+action_recompile() {
+
+	pushd "${LLVM_SRC_BASE}/build"
+
+	nice make update && \
+		nice make -j9 all && \
+		make check && \
+		nice make install
+
+	popd
+
+}
+
+# === main entry point ================================================
+case $1 in
+setup)
+	action_setup_svn
+	;;
+recompile)
+	action_recompile
+	;;
+help)
+	action_usage
+	action_help
+	;;
+*)
+	action_usage
+	exit 1
+	;;
+esac
+
+exit 0
+
+#
+# end of file
+#
