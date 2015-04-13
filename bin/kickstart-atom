@@ -25,10 +25,15 @@ sudo apt-get install build-essential git libgnome-keyring-dev fakeroot
 function action_recompile {
 pushd "/home/ADESTIS/bm/repos/github.com/bsmr-x-script/atom"
 
+git fetch -p
+git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
+
 if [ -x "script/build" -a -x "script/grunt" ] ; then
 	script/build
 	script/grunt install --install-dir "/opt/atom/git"
 fi
+
+git checkout master
 
 popd
 }
