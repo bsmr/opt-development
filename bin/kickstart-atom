@@ -3,6 +3,9 @@
 SCRIPT_NAME=$(basename $0)
 SCRIPT_PATH=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
+ATOM_GIT_HOME="${HOME}/repos/github.com/bsmr-x-script/atom"
+ATOM_OPT_HOME="/opt/atom/git"
+
 # --- display usage information ---------------------------------------
 action_usage() {
 cat <<EOF
@@ -23,14 +26,14 @@ sudo apt-get install build-essential git libgnome-keyring-dev fakeroot
 }
 
 function action_recompile {
-pushd "/home/ADESTIS/bm/repos/github.com/bsmr-x-script/atom"
+pushd "${ATOM_GIT_HOME}"
 
 git fetch -p
 git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 
 if [ -x "script/build" -a -x "script/grunt" ] ; then
 	script/build
-	script/grunt install --install-dir "/opt/atom/git"
+	script/grunt install --install-dir "${ATOM_OPT_HOME}"
 fi
 
 git checkout master
