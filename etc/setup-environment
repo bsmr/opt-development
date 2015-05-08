@@ -85,6 +85,7 @@ for X in						\
 		"/opt/jetbrains/pycharm"		\
 		"-/opt/codeblocks"			\
 		"/opt/sublime"				\
+		"/opt/go"				\
                 "/opt/mono"                             \
                 "-/opt/mono/mono"                       \
                 "-/opt/mono/monodevelop"                \

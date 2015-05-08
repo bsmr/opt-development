@@ -32,6 +32,7 @@ git fetch -p
 git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 
 if [ -x "script/build" -a -x "script/grunt" ] ; then
+	script/clean
 	script/build
 	script/grunt install --install-dir "${ATOM_OPT_HOME}"
 fi
