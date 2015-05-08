@@ -12,7 +12,9 @@ SCRIPT_NAME=$(basename "$0")
 
 TITLE="+++ ACTION:"
 OPTERL="/opt/erlang/otp"
+OPTELIXIR="/opt/erlang/elixir"
 ERLLINK="${OPTERL}/active"
+ELIXIRLINK="${OPTELIXIR}/active"
 
 # gmp: needs base path!
 # --with-gmp=/opt/gnu/gmp/6.0.0
@@ -21,7 +23,7 @@ GMPBASE="/opt/gnu/gmp/active"
 
 action_usage() {
 	cat <<EOF
-usage: ${SCRIPT_NAME} [ install ARCS DST | git | setup RELEASE BUILD [PATCH] | check-dependencies | help ]
+usage: ${SCRIPT_NAME} [ install ARCS DST | git | elixir-git | setup RELEASE BUILD [PATCH] | check-dependencies | help ]
 EOF
 }
 
@@ -197,6 +199,18 @@ action_setup_git() {
 	action_setup_common "${PREFIX}"
 }
 
+action_setup_elixir_git() {
+	BUILDTS=$(date --utc '+%Y%m%d/%H%M')
+	ELIXIRPREFIX="${OPTELIXIR}/git/${BUILDTS}"
+	PREFIX="${ELIXIRPREFIX}" make "clean" "test" "install"
+	if [ -h "${ELIXIRLINK}" -a -d "${ELIXIRPREFIX}" ] ; then
+		rm "${ELIXIRLINK}"
+	fi
+	if [ -d "${ELIXIRPREFIX}" ] ; then
+		ln -sf "${ELIXIRPREFIX}" "${ELIXIRLINK}"
+	fi
+}
+
 action_check_dependencies() {
 sudo apt-get install build-essential m4 libncurses5-dev libssh-dev libgmp-dev libwxgtk2.8-dev libglu1-mesa-dev
 sudo apt-get install libglu1-mesa-dev
@@ -228,6 +242,9 @@ case $1 in
                 ;;
 	git)
 		action_setup_git
+		;;
+	elixir-git)
+		action_setup_elixir_git
 		;;
 	setup)
 		shift
