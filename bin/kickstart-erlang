@@ -23,7 +23,15 @@ GMPBASE="/opt/gnu/gmp/active"
 
 action_usage() {
 	cat <<EOF
-usage: ${SCRIPT_NAME} [ install ARCS DST | git | elixir-git | setup RELEASE BUILD [PATCH] | check-dependencies | help ]
+usage: ${SCRIPT_NAME} [ ACTION ]
+ actions:
+   install ARCS DST             : install an Erlang/OTP source tarball
+   git                          : install Erlang/OTP from git clone
+   elixir-git                   : install Elixir from git clone
+   git-recompile                : install Erlang/Elixir from git
+   setup RELEASE BUILD [PATCH]  : install Erlang/OTP from source tarball
+   check-dependencies           : install Ubuntu dependencies
+   help                         : display help (very incomplete)
 EOF
 }
 
@@ -232,6 +240,161 @@ sudo apt-get install libxml2-utils
 sudo apt-get install unixodbc-dev
 }
 
+action_git_recompile() {
+	# ====================================================================
+	# setup some things
+	BUILDTS=$(date --utc '+%Y%m%d/%H%M')
+	ERLANG_PREFIX="/opt/erlang/otp/git/${BUILDTS}"
+	ELIXIR_PREFIX="/opt/erlang/elixir/git/${BUILDTS}"
+
+	# ====================================================================
+	# check environment
+	if [ ! -d "/opt/erlang/git" ] ; then
+		mkdir -p "/opt/erlang/git"
+	fi
+	pushd "/opt/erlang/git"
+
+	# ====================================================================
+	# Erlang/OTP
+	#  https://github.com/erlang/otp.git
+	#  maint
+	if [ ! -d "otp" ] ; then
+		git clone "https://github.com/erlang/otp.git" "otp"
+	fi
+	pushd "otp"
+	git fetch "origin"
+	git fetch "origin" --tags
+	git checkout "maint"
+	git pull "origin" "maint"
+	git checkout -b "local-build"
+
+	OLD_LANG=$LANG
+	export LANG="C"
+	export ERL_TOP=$(pwd)
+	export MAKEFLAGS="-j9"
+
+	nice ./otp_build setup -a --prefix="${ERLANG_PREFIX}"
+	nice make install install-docs
+
+	git add -A
+	git commit -m 'local build'
+	git checkout "maint"
+	git branch "local-build" --delete
+
+	export LANG="${OLD_LANG}"
+
+	if [ -h "/opt/erlang/otp/active" ] ; then
+		rm "/opt/erlang/otp/active"
+	fi
+	ln -sf "${ERLANG_PREFIX}" "/opt/erlang/otp/active"
+
+	# cleanup Erlang/OTP
+	popd
+
+	# ====================================================================
+	# Elixir
+	#  https://github.com/elixir-lang/elixir.git
+	#  master
+
+	if [ ! -d "elixir" ] ; then
+		git clone "https://github.com/elixir-lang/elixir.git" "elixir"
+	fi
+
+	pushd "elixir"
+
+	git fetch "origin"
+	git fetch "origin" --tags
+	git checkout "master"
+	git pull "origin" "master"
+	git checkout -b "local-build"
+
+	OLD_PATH=${PATH}
+	export PATH="${ERLANG_PREFIX}/bin:${PATH}"
+	for TASK in "clean" "compile" "test" "install" ; do
+		PREFIX="${ELIXIR_PREFIX}" make "${TASK}"
+	done
+	export PATH=${OLD_PATH}
+
+	git add -A
+	git commit -m 'local build'
+	git checkout "master"
+	git branch "local-build" --delete
+
+	if [ -h "/opt/erlang/elixir/active" ] ; then
+		rm "/opt/erlang/elixir/active"
+	fi
+	ln -sf "${ELIXIR_PREFIX}" "/opt/erlang/elixir/active"
+
+	popd
+
+	# ====================================================================
+	# ex_doc
+	# TBD
+
+	# ====================================================================
+	# LFE
+	#  https://github.com/rvirding/lfe.git
+	#  develop
+
+	if [ ! -d "lfe" ] ; then
+		git clone "https://github.com/rvirding/lfe.git" "lfe"
+	fi
+
+	pushd "lfe"
+
+	git fetch "origin"
+	git fetch "origin" --tags
+	git checkout "develop"
+	git pull "origin" "develop"
+	git checkout -b "local-build"
+
+	OLD_PATH=${PATH}
+	export PATH="${ERLANG_PREFIX}/bin:${PATH}"
+	make compile
+	make install
+	export PATH=${OLD_PATH}
+
+	git add -A
+	git commit -m 'local build'
+	git checkout "develop"
+	git branch "local-build" --delete
+
+	popd
+
+	# ====================================================================
+	# Phoenix
+	#  https://github.com/phoenixframework/phoenix.git
+	#  master
+
+	if [ ! -d "phoenix" ] ; then
+		git clone "https://github.com/phoenixframework/phoenix.git" "phoenix"
+	fi
+
+	pushd "phoenix"
+
+	git fetch "origin"
+	git fetch "origin" --tags
+	git checkout "master"
+	git pull "origin" "master"
+	git checkout -b "local-build"
+
+	OLD_PATH=${PATH}
+	export PATH="${ELIXIR_PREFIX}/bin:${ERLANG_PREFIX}/bin:${PATH}"
+	# actually nothing to do... right now...
+	export PATH=${OLD_PATH}
+
+	git add -A
+	git commit -m 'local build'
+	git checkout "master"
+	git branch "local-build" --delete
+
+	popd
+
+	# ====================================================================
+	# cleanup environment
+	popd
+}
+
 case $1 in
 	check-dependencies)
 		action_check_dependencies
@@ -245,6 +408,10 @@ case $1 in
 		;;
 	elixir-git)
 		action_setup_elixir_git
+		;;
+	git-recompile)
+		shift
+		action_git_recompile $*
 		;;
 	setup)
 		shift
