@@ -65,6 +65,7 @@ then
     echo "Error: failed to fetch (ALL) from remote \"${RU}\"!" >&2
 	exit 1
 fi
+git fetch "${RU}" --tags
 
 # update from upstream
 echo "*** --- git pull upstream ------------------------------"
@@ -83,6 +84,7 @@ then
 	echo "Error: failed to puh branch \"${BRANCH}\" to remote \"${RU}\"!" >&2
 	exit 1
 fi
+git push "${RO}" --tags
 }
 
 action_edit() {
