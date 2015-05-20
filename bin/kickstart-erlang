@@ -380,13 +380,16 @@ action_git_recompile() {
 
 	OLD_PATH=${PATH}
 	export PATH="${ELIXIR_PREFIX}/bin:${ERLANG_PREFIX}/bin:${PATH}"
-	# actually nothing to do... right now...
+	mix local.hex --force
+	mix deps.get
+	mix archive.build
+	mix archive.install $(find $(pwd -P) -type f -name '*.ez') --force
 	export PATH=${OLD_PATH}
 
 	git add -A
 	git commit -m 'local build'
 	git checkout "master"
-	git branch "local-build" --delete
+	git branch -D "local-build"
 
 	popd
 
