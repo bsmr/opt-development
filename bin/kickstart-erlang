@@ -384,6 +384,12 @@ action_git_recompile() {
 	mix deps.get
 	mix archive.build
 	mix archive.install $(find $(pwd -P) -type f -name '*.ez') --force
+
+	pushd installer
+	MIX_ENV=prod mix archive.build
+	mix archive.install --force
+	popd
+
 	export PATH=${OLD_PATH}
 
 	git add -A
