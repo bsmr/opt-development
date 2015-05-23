@@ -28,9 +28,10 @@ usage: ${SCRIPT_NAME} [ ACTION ]
    install ARCS DST             : install an Erlang/OTP source tarball
    git                          : install Erlang/OTP from git clone
    elixir-git                   : install Elixir from git clone
-   git-recompile                : install Erlang/Elixir from git
    setup RELEASE BUILD [PATCH]  : install Erlang/OTP from source tarball
    check-dependencies           : install Ubuntu dependencies
+   git-recompile                : install Erlang/Elixir from git
+   cleanup                      : cleanup old version of 'git-recompile'
    help                         : display help (very incomplete)
 EOF
 }
@@ -404,6 +405,32 @@ action_git_recompile() {
 	popd
 }
 
+action_cleanup() {
+	# ====================================================================
+	# setup some things
+	ERLANG_PREFIX="/opt/erlang/otp/git"
+	ELIXIR_PREFIX="/opt/erlang/elixir/git"
+
+	# ====================================================================
+	for B in "${ERLANG_PREFIX}" "${ELIXIR_PREFIX}"
+	do
+		# cleanup last days
+		for D in $(find "${B}" -mindepth 1 -maxdepth 1 -type d | sort | head --lines=-1)
+		do
+			echo -n "Deleting \"${D}\"... "
+			rm -rf "${D}"
+			echo "done."
+		done
+		# cleanup last daily builds
+		for D in $(find "${B}" -mindepth 2 -maxdepth 2 -type d | sort | head --lines=-1)
+		do
+			echo -n "Deleting \"${D}\"... "
+			rm -rf "${D}"
+			echo "done."
+		done
+	done
+}
+
 case $1 in
 	check-dependencies)
 		action_check_dependencies
@@ -421,6 +448,10 @@ case $1 in
 	git-recompile)
 		shift
 		action_git_recompile $*
+		;;
+	cleanup)
+		shift
+		action_cleanup $*
 		;;
 	setup)
 		shift
