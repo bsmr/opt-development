@@ -50,7 +50,7 @@ fi
 
 # update from origin
 echo "*** --- git pull origin --------------------------------"
-git pull "${RO}" "${BRANCH}"
+git pull --commit "${RO}" "${BRANCH}"
 if [ "$?" != "0" ]
 then
 	echo "Error: failed to pull branch \"${BRANCH}\" from remote \"${RO}\"!" >&2
@@ -69,7 +69,7 @@ git fetch "${RU}" --tags
 
 # update from upstream
 echo "*** --- git pull upstream ------------------------------"
-git pull "${RU}" "${BRANCH}"
+git pull --commit "${RU}" "${BRANCH}"
 if [ "$?" != "0" ]
 then
 	echo "Error: failed to pull branch \"${BRANCH}\" from remote \"${RU}\"!" >&2
