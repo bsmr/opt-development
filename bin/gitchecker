@@ -69,7 +69,18 @@ git fetch "${RU}" --tags
 
 # update from upstream
 echo "*** --- git pull upstream ------------------------------"
-git pull --commit "${RU}" "${BRANCH}"
+# --- BOB -------------------------------------------------------------
+# based on BLOG:
+# https://coderwall.com/p/j-x2pa/i-don-t-need-no-stinkin-git-merge-bubbles
+# ---------------------------------------------------------------------
+git stash save
+git reset --hard HEAD~1
+git pull --rebase "${RU}" "${BRANCH}"
+# --- EOB -------------------------------------------------------------
+#git pull "${RU}" "${BRANCH}"
+#git pull --commit "${RU}" "${BRANCH}"
+#git pull --rebase "${RU}" "${BRANCH}"
+#git pull --ff "${RU}" "${BRANCH}"
 if [ "$?" != "0" ]
 then
 	echo "Error: failed to pull branch \"${BRANCH}\" from remote \"${RU}\"!" >&2
