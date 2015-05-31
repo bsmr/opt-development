@@ -242,20 +242,17 @@ sudo apt-get install libxml2-utils
 sudo apt-get install unixodbc-dev
 }
 
-action_git_recompile() {
-	# ====================================================================
-	# setup some things
-	BUILDTS=$(date --utc '+%Y%m%d/%H%M')
-	ERLANG_PREFIX="/opt/erlang/otp/git/${BUILDTS}"
-	ELIXIR_PREFIX="/opt/erlang/elixir/git/${BUILDTS}"
-
-	# ====================================================================
-	# check environment
-	if [ ! -d "/opt/erlang/git" ] ; then
-		mkdir -p "/opt/erlang/git"
+action_git_recompile_test() {
+	echo "*** action_git_recompile_test() ***"
+	if [ -z "${ERLANG_PREFIX}" -o -z "${BUILDTS}" ]
+	then
+		echo "ERROR: no erlang prefix or build timestamp!"
+	else
+		echo "OK, we are good!"
 	fi
-	pushd "/opt/erlang/git"
+}
 
+action_git_recompile_erlang() {
 	# ====================================================================
 	# Erlang/OTP
 	#  https://github.com/erlang/otp.git
@@ -292,7 +289,9 @@ action_git_recompile() {
 
 	# cleanup Erlang/OTP
 	popd
+}
 
+action_git_recompile_elixir() {
 	# ====================================================================
 	# Elixir
 	#  https://github.com/elixir-lang/elixir.git
@@ -332,37 +331,9 @@ action_git_recompile() {
 	# ====================================================================
 	# ex_doc
 	# TBD
+}
 
-	# ====================================================================
-	# LFE
-	#  https://github.com/rvirding/lfe.git
-	#  develop
-
-	if [ ! -d "lfe" ] ; then
-		git clone "https://github.com/rvirding/lfe.git" "lfe"
-	fi
-
-	pushd "lfe"
-
-	git fetch "origin"
-	git fetch "origin" --tags
-	git checkout "develop"
-	git pull "origin" "develop"
-	git checkout -b "local-build"
-
-	OLD_PATH=${PATH}
-	export PATH="${ERLANG_PREFIX}/bin:${PATH}"
-	make compile
-	make install
-	export PATH=${OLD_PATH}
-
-	git add -A
-	git commit -m 'local build'
-	git checkout "develop"
-	git branch "local-build" --delete
-
-	popd
-
+action_git_recompile_phoenix() {
 	# ====================================================================
 	# Phoenix
 	#  https://github.com/phoenixframework/phoenix.git
@@ -400,6 +371,70 @@ action_git_recompile() {
 	git branch -D "local-build"
 
 	popd
+}
+
+action_git_recompile_lfe() {
+	# ====================================================================
+	# LFE
+	#  https://github.com/rvirding/lfe.git
+	#  develop
+
+	if [ ! -d "lfe" ] ; then
+		git clone "https://github.com/rvirding/lfe.git" "lfe"
+	fi
+
+	pushd "lfe"
+
+	git fetch "origin"
+	git fetch "origin" --tags
+	git checkout "develop"
+	git pull "origin" "develop"
+	git checkout -b "local-build"
+
+	OLD_PATH=${PATH}
+	export PATH="${ERLANG_PREFIX}/bin:${PATH}"
+	make compile
+	make install
+	export PATH=${OLD_PATH}
+
+	git add -A
+	git commit -m 'local build'
+	git checkout "develop"
+	git branch "local-build" --delete
+
+	popd
+}
+
+action_git_recompile() {
+	# ====================================================================
+	# setup some things
+	BUILDTS=$(date --utc '+%Y%m%d/%H%M')
+	ERLANG_PREFIX="/opt/erlang/otp/git/${BUILDTS}"
+	ELIXIR_PREFIX="/opt/erlang/elixir/git/${BUILDTS}"
+
+	# ====================================================================
+	# check environment
+	if [ ! -d "/opt/erlang/git" ] ; then
+		mkdir -p "/opt/erlang/git"
+	fi
+	pushd "/opt/erlang/git"
+
+	# ====================================================================
+	# phases to rebuild
+
+	declare -A phases
+	phases=(["test"]=""		\
+		["erlang"]="yes"	\
+		["elixir"]="yes"	\
+		["phoenix"]="yes"	\
+		["lfe"]="yes"		\
+	)
+
+	for phase in ${!phases[*]}
+	do
+		if [ "${phases[${phase}]}" != "yes" ] ; then continue ; fi
+		"action_git_recompile_${phase}"
+	done
 
 	# ====================================================================
 	# cleanup environment
