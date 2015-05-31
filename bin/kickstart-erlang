@@ -415,7 +415,7 @@ action_git_recompile() {
 
 	# ====================================================================
 	# check directories
-	for D in "git" "erlang" "elixir"
+	for D in "git" "otp" "elixir"
 	do
 		if [ ! -d "${MY_ERLANG_DIR}/${D}" ] ; then
 			mkdir -p "${MY_ERLANG_DIR}/${D}"
