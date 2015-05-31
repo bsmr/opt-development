@@ -282,10 +282,12 @@ action_git_recompile_erlang() {
 
 	export LANG="${OLD_LANG}"
 
-	if [ -h "${MY_ERLANG_DIR}/otp/active" ] ; then
-		rm "${MY_ERLANG_DIR}/otp/active"
+	if [ -d "${ERLANG_PREFIX}" ] ; then
+		if [ -h "${MY_ERLANG_DIR}/otp/active" ] ; then
+			rm "${MY_ERLANG_DIR}/otp/active"
+		fi
+		ln -sf "${ERLANG_PREFIX}" "${MY_ERLANG_DIR}/otp/active"
 	fi
-	ln -sf "${ERLANG_PREFIX}" "${MY_ERLANG_DIR}/otp/active"
 
 	# cleanup Erlang/OTP
 	popd
@@ -321,10 +323,12 @@ action_git_recompile_elixir() {
 	git checkout "master"
 	git branch "local-build" --delete
 
-	if [ -h "${MY_ERLANG_DIR}/elixir/active" ] ; then
-		rm "${MY_ERLANG_DIR}/elixir/active"
+	if [ -d "${ELIXIR_PREFIX}" ] ; then
+		if [ -h "${MY_ERLANG_DIR}/elixir/active" ] ; then
+			rm "${MY_ERLANG_DIR}/elixir/active"
+		fi
+		ln -sf "${ELIXIR_PREFIX}" "${MY_ERLANG_DIR}/elixir/active"
 	fi
-	ln -sf "${ELIXIR_PREFIX}" "${MY_ERLANG_DIR}/elixir/active"
 
 	popd
 
