@@ -222,6 +222,7 @@ action_setup_elixir_git() {
 
 action_check_dependencies() {
 sudo apt-get install build-essential m4 libncurses5-dev libssh-dev libgmp-dev libwxgtk2.8-dev libglu1-mesa-dev
+sudo apt-get install autoconf 
 sudo apt-get install libglu1-mesa-dev
 sudo apt-get install ncurses-doc libssh-doc wx2.8-doc libxcb-doc libxext-doc
 sudo apt-get install default-jdk xsltproc fop
@@ -384,11 +385,11 @@ action_git_recompile() {
 	mix local.hex --force
 	mix deps.get
 	mix archive.build
-	mix archive.install $(find $(pwd -P) -type f -name '*.ez') --force
+#	mix archive.install $(find $(pwd -P) -type f -name '*.ez') --force
 
 	pushd installer
 	MIX_ENV=prod mix archive.build
-	mix archive.install --force
+#	mix archive.install --force
 	popd
 
 	export PATH=${OLD_PATH}
