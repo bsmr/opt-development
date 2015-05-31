@@ -414,10 +414,16 @@ action_git_recompile() {
 	ELIXIR_PREFIX="${MY_ERLANG_DIR}/elixir/git/${BUILDTS}"
 
 	# ====================================================================
-	# check environment
-	if [ ! -d "${MY_ERLANG_DIR}/git" ] ; then
-		mkdir -p "${MY_ERLANG_DIR}/git"
-	fi
+	# check directories
+	for D in "git" "erlang" "elixir"
+	do
+		if [ ! -d "${MY_ERLANG_DIR}/${D}" ] ; then
+			mkdir -p "${MY_ERLANG_DIR}/${D}"
+		fi
+	done
+
+	# ====================================================================
+	# get started...
 	pushd "${MY_ERLANG_DIR}/git"
 
 	# ====================================================================
