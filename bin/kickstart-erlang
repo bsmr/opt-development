@@ -257,9 +257,11 @@ action_git_recompile_erlang() {
 	# Erlang/OTP
 	#  https://github.com/erlang/otp.git
 	#  maint
+
 	if [ ! -d "otp" ] ; then
 		git clone "https://github.com/erlang/otp.git" "otp"
 	fi
+
 	pushd "otp"
 	git fetch "origin"
 	git fetch "origin" --tags
@@ -291,6 +293,10 @@ action_git_recompile_erlang() {
 
 	# cleanup Erlang/OTP
 	popd
+
+	# ====================================================================
+	# we are done
+	return 0
 }
 
 action_git_recompile_elixir() {
@@ -298,6 +304,11 @@ action_git_recompile_elixir() {
 	# Elixir
 	#  https://github.com/elixir-lang/elixir.git
 	#  master
+
+	if [ ! -d "${ERLANG_PREFIX}/bin" ] ; then
+		echo "Error: can not find new Erlang bin path" >&2
+		return 1
+	fi
 
 	if [ ! -d "elixir" ] ; then
 		git clone "https://github.com/elixir-lang/elixir.git" "elixir"
@@ -335,6 +346,10 @@ action_git_recompile_elixir() {
 	# ====================================================================
 	# ex_doc
 	# TBD
+
+	# ====================================================================
+	# we are done
+	return 0
 }
 
 action_git_recompile_phoenix() {
@@ -342,6 +357,16 @@ action_git_recompile_phoenix() {
 	# Phoenix
 	#  https://github.com/phoenixframework/phoenix.git
 	#  master
+
+	if [ ! -d "${ERLANG_PREFIX}/bin" ] ; then
+		echo "Error: can not find new Erlang bin path" >&2
+		return 1
+	fi
+
+	if [ ! -d "${ELIXIR_PREFIX}/bin" ] ; then
+		echo "Error: can not find new Elixir bin path" >&2
+		return 1
+	fi
 
 	if [ ! -d "phoenix" ] ; then
 		git clone "https://github.com/phoenixframework/phoenix.git" "phoenix"
@@ -375,6 +400,10 @@ action_git_recompile_phoenix() {
 	git branch -D "local-build"
 
 	popd
+
+	# ====================================================================
+	# we are done
+	return 0
 }
 
 action_git_recompile_lfe() {
@@ -382,6 +411,11 @@ action_git_recompile_lfe() {
 	# LFE
 	#  https://github.com/rvirding/lfe.git
 	#  develop
+
+	if [ ! -d "${ERLANG_PREFIX}/bin" ] ; then
+		echo "Error: can not find new Erlang bin path" >&2
+		return 1
+	fi
 
 	if [ ! -d "lfe" ] ; then
 		git clone "https://github.com/rvirding/lfe.git" "lfe"
@@ -407,6 +441,10 @@ action_git_recompile_lfe() {
 	git branch "local-build" --delete
 
 	popd
+
+	# ====================================================================
+	# we are done
+	return 0
 }
 
 action_git_recompile() {
@@ -441,10 +479,13 @@ action_git_recompile() {
 		["lfe"]="yes"		\
 	)
 
-	for phase in ${!phases[*]}
+	#for phase in ${!phases[*]}
+	for phase in "test" "erlang" "elixir" "phoenix" "lfe"
 	do
 		if [ "${phases[${phase}]}" != "yes" ] ; then continue ; fi
+		echo "*** Phase: ${phase}"
 		"action_git_recompile_${phase}"
+		if [ "$?" != "0" ] ; then break ; fi
 	done
 
 	# ====================================================================
