@@ -282,10 +282,10 @@ action_git_recompile_erlang() {
 
 	export LANG="${OLD_LANG}"
 
-	if [ -h "/opt/erlang/otp/active" ] ; then
-		rm "/opt/erlang/otp/active"
+	if [ -h "${MY_ERLANG_DIR}/otp/active" ] ; then
+		rm "${MY_ERLANG_DIR}/otp/active"
 	fi
-	ln -sf "${ERLANG_PREFIX}" "/opt/erlang/otp/active"
+	ln -sf "${ERLANG_PREFIX}" "${MY_ERLANG_DIR}/otp/active"
 
 	# cleanup Erlang/OTP
 	popd
@@ -321,10 +321,10 @@ action_git_recompile_elixir() {
 	git checkout "master"
 	git branch "local-build" --delete
 
-	if [ -h "/opt/erlang/elixir/active" ] ; then
-		rm "/opt/erlang/elixir/active"
+	if [ -h "${MY_ERLANG_DIR}/elixir/active" ] ; then
+		rm "${MY_ERLANG_DIR}/elixir/active"
 	fi
-	ln -sf "${ELIXIR_PREFIX}" "/opt/erlang/elixir/active"
+	ln -sf "${ELIXIR_PREFIX}" "${MY_ERLANG_DIR}/elixir/active"
 
 	popd
 
@@ -409,15 +409,16 @@ action_git_recompile() {
 	# ====================================================================
 	# setup some things
 	BUILDTS=$(date --utc '+%Y%m%d/%H%M')
-	ERLANG_PREFIX="/opt/erlang/otp/git/${BUILDTS}"
-	ELIXIR_PREFIX="/opt/erlang/elixir/git/${BUILDTS}"
+	MY_ERLANG_DIR="/opt/erlang"
+	ERLANG_PREFIX="${MY_ERLANG_DIR}/otp/git/${BUILDTS}"
+	ELIXIR_PREFIX="${MY_ERLANG_DIR}/elixir/git/${BUILDTS}"
 
 	# ====================================================================
 	# check environment
-	if [ ! -d "/opt/erlang/git" ] ; then
-		mkdir -p "/opt/erlang/git"
+	if [ ! -d "${MY_ERLANG_DIR}/git" ] ; then
+		mkdir -p "${MY_ERLANG_DIR}/git"
 	fi
-	pushd "/opt/erlang/git"
+	pushd "${MY_ERLANG_DIR}/git"
 
 	# ====================================================================
 	# phases to rebuild
@@ -444,8 +445,9 @@ action_git_recompile() {
 action_cleanup() {
 	# ====================================================================
 	# setup some things
-	ERLANG_PREFIX="/opt/erlang/otp/git"
-	ELIXIR_PREFIX="/opt/erlang/elixir/git"
+	MY_ERLANG_DIR="/opt/erlang"
+	ERLANG_PREFIX="${MY_ERLANG_DIR}/otp/git"
+	ELIXIR_PREFIX="${MY_ERLANG_DIR}/elixir/git"
 
 	# ====================================================================
 	for B in "${ERLANG_PREFIX}" "${ELIXIR_PREFIX}"
